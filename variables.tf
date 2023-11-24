@@ -1,0 +1,3 @@
+variable "cosmosdb" {
+  type = any
+}
