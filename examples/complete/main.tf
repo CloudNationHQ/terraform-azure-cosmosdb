@@ -22,7 +22,7 @@ module "cosmosdb" {
   version = "~> 0.1"
 
   cosmosdb = {
-    name          = module.naming.cosmosdb_account.name
+    name          = module.naming.cosmosdb_account.name_unique
     location      = module.rg.groups.demo.location
     resourcegroup = module.rg.groups.demo.name
     kind          = "MongoDB"

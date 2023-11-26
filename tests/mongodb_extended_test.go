@@ -1,88 +1,98 @@
 package main
 
 import (
-	"context"
-	"strings"
-	"testing"
+    "context"
+    "strings"
+    "testing"
+		"time"
 
-	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
-	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/cosmos/armcosmos"
-	"github.com/cloudnationhq/terraform-azure-cosmosdb/shared"
-	"github.com/gruntwork-io/terratest/modules/terraform"
-	"github.com/stretchr/testify/require"
+    "github.com/Azure/azure-sdk-for-go/sdk/azidentity"
+    "github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/cosmos/armcosmos"
+    "github.com/cloudnationhq/terraform-azure-cosmosdb/shared"
+    "github.com/gruntwork-io/terratest/modules/terraform"
+    "github.com/stretchr/testify/require"
 )
 
 type CosmosDbAccountDetails struct {
-	ResourceGroupName string
-	AccountName       string
+    ResourceGroupName string
+    AccountName       string
 }
 
-type ClientSetup struct {
-	subscriptionId string
-	cosmosClient   *armcosmos.DatabaseAccountsClient
+type CosmosClient struct {
+    subscriptionId string
+    cosmosClient   *armcosmos.DatabaseAccountsClient
 }
 
-func (details *CosmosDbAccountDetails) GetDatabaseAccount(t *testing.T,client *armcosmos.DatabaseAccountsClient,) *armcosmos.DatabaseAccountGetResults {
-	resp, err := client.Get(context.Background(), details.ResourceGroupName, details.AccountName, nil)
-	require.NoError(t, err, "Failed to get database account")
-	return &resp.DatabaseAccountGetResults
+func NewCosmosDbClient(t *testing.T, subscriptionId string) *CosmosClient {
+    cred, err := azidentity.NewDefaultAzureCredential(nil)
+    require.NoError(t, err, "Failed to create credential")
+
+    cosmosClient, err := armcosmos.NewDatabaseAccountsClient(subscriptionId, cred, nil)
+    require.NoError(t, err, "Failed to create cosmos client")
+
+    return &CosmosClient{
+        subscriptionId: subscriptionId,
+        cosmosClient:   cosmosClient,
+    }
 }
 
-func (setup *ClientSetup) InitializeCosmosDbAccountClient(t *testing.T, cred *azidentity.DefaultAzureCredential) {
-	var err error
-	setup.cosmosClient, err = armcosmos.NewDatabaseAccountsClient(setup.subscriptionId, cred, nil)
-	require.NoError(t, err, "Failed to create cosmos client")
+func (c *CosmosClient) GetDatabaseAccount(ctx context.Context, t *testing.T, details *CosmosDbAccountDetails) *armcosmos.DatabaseAccountGetResults {
+    resp, err := c.cosmosClient.Get(ctx, details.ResourceGroupName, details.AccountName, nil)
+    require.NoError(t, err, "Failed to get database account")
+    return &resp.DatabaseAccountGetResults
+}
+
+func InitializeTerraform(t *testing.T) *terraform.Options {
+    tfOpts := shared.GetTerraformOptions("../examples/complete")
+    terraform.InitAndApply(t, tfOpts)
+    return tfOpts
+}
+
+func CleanupTerraform(t *testing.T, tfOpts *terraform.Options) {
+    shared.Cleanup(t, tfOpts)
 }
 
 func TestCosmosDbAccount(t *testing.T) {
-	t.Run("VerifyCosmosDbAccount", func(t *testing.T) {
-		t.Parallel()
+    tfOpts := InitializeTerraform(t)
+    defer CleanupTerraform(t, tfOpts)
 
-		cred, err := azidentity.NewDefaultAzureCredential(nil)
-		require.NoError(t, err, "Failed to create credential")
+    subscriptionId := terraform.Output(t, tfOpts, "subscriptionId")
+    cosmosClient := NewCosmosDbClient(t, subscriptionId)
 
-		tfOpts := shared.GetTerraformOptions("../examples/complete")
-		defer shared.Cleanup(t, tfOpts)
-		terraform.InitAndApply(t, tfOpts)
+    cosmosDbAccountMap := terraform.OutputMap(t, tfOpts, "account")
+    cosmosDbAccountDetails := &CosmosDbAccountDetails{
+        ResourceGroupName: cosmosDbAccountMap["resource_group_name"],
+        AccountName:       cosmosDbAccountMap["name"],
+    }
 
-		cosmosDbAccountMap := terraform.OutputMap(t, tfOpts, "account")
-		subscriptionId := terraform.Output(t, tfOpts, "subscriptionId")
+    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+    defer cancel()
 
-		cosmosDbAccountDetails := &CosmosDbAccountDetails{
-			ResourceGroupName: cosmosDbAccountMap["resource_group_name"],
-			AccountName:       cosmosDbAccountMap["name"],
-		}
+    cosmosDbAccount := cosmosClient.GetDatabaseAccount(ctx, t, cosmosDbAccountDetails)
 
-		ClientSetup := &ClientSetup{subscriptionId: subscriptionId}
-		ClientSetup.InitializeCosmosDbAccountClient(t, cred)
-		cosmosDbAccount := cosmosDbAccountDetails.GetDatabaseAccount(t, ClientSetup.cosmosClient)
-
-		t.Run("VerifyCosmosDbAccount", func(t *testing.T) {
-			verifyCosmosDbAccount(t, cosmosDbAccountDetails, cosmosDbAccount)
-		})
-	})
+    verifyCosmosDbAccount(t, cosmosDbAccountDetails, cosmosDbAccount)
 }
 
-func verifyCosmosDbAccount(t *testing.T,details *CosmosDbAccountDetails,databaseAccount *armcosmos.DatabaseAccountGetResults,) {
-	t.Helper()
+func verifyCosmosDbAccount(t *testing.T, details *CosmosDbAccountDetails, databaseAccount *armcosmos.DatabaseAccountGetResults) {
+    t.Helper()
 
-	require.Equal(
-		t,
-		details.AccountName,
-		*databaseAccount.Name,
-		"Database account name does not match expected value",
-	)
+    require.Equal(
+        t,
+        details.AccountName,
+        *databaseAccount.Name,
+        "Database account name does not match expected value",
+    )
 
-	require.Equal(
-		t,
-		"Succeeded",
-		string(*databaseAccount.Properties.ProvisioningState),
-		"Database account provisioning state is not Succeeded",
-	)
+    require.Equal(
+        t,
+        "Succeeded",
+        string(*databaseAccount.Properties.ProvisioningState),
+        "Database account provisioning state is not Succeeded",
+    )
 
-	require.True(
-		t,
-	strings.HasPrefix(details.AccountName, "cosmos"),
-		"Database account name does not start with the right abbreviation",
-	)
+    require.True(
+        t,
+        strings.HasPrefix(details.AccountName, "cosmos"),
+        "Database account name does not start with the right abbreviation",
+    )
 }
