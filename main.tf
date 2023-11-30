@@ -42,6 +42,13 @@ resource "azurerm_cosmosdb_account" "db" {
     max_interval_in_seconds = try(var.cosmosdb.consistency_policy.max_interval_in_seconds, 300)
     max_staleness_prefix    = try(var.cosmosdb.consistency_policy.max_staleness_prefix, 100000)
   }
+
+  ip_range_filter = var.cosmosdb.ip_range_filter
+
+  virtual_network_rule {
+    id                                   = var.cosmosdb.subscription_id
+    ignore_missing_vnet_service_endpoint = try(var.cosmosdb.enable.ignore_missing_vnet_service_endpoint, false)
+  }
 }
 
 # mongo databases
