@@ -46,8 +46,8 @@ resource "azurerm_cosmosdb_account" "db" {
   ip_range_filter = var.cosmosdb.ip_range_filter
 
   virtual_network_rule {
-    id                                   = var.cosmosdb.subscription_id
-    ignore_missing_vnet_service_endpoint = try(var.cosmosdb.enable.ignore_missing_vnet_service_endpoint, false)
+    id                                   = try(var.cosmosdb.virtual_network_rule.id, "")
+    ignore_missing_vnet_service_endpoint = try(var.cosmosdb.virtual_network_rule.ignore_missing_vnet_service_endpoint, false)
   }
 }
 
