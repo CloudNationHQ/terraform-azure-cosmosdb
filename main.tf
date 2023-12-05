@@ -48,8 +48,8 @@ resource "azurerm_cosmosdb_account" "db" {
   dynamic "virtual_network_rule" {
     for_each = try(var.cosmosdb.virtual_network_rules, [])
     content {
-      id                                   = virtual_network_rules.value.id
-      ignore_missing_vnet_service_endpoint = virtual_network_rules.value.ignore_missing_vnet_service_endpoint
+      id                                   = each.value.id
+      ignore_missing_vnet_service_endpoint = each.value.ignore_missing_vnet_service_endpoint
     }
   }
 }
