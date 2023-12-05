@@ -45,7 +45,7 @@ resource "azurerm_cosmosdb_account" "db" {
 
   ip_range_filter = var.cosmosdb.ip_range_filter
 
-  dynamic "virtual_network_rules" {
+  dynamic "virtual_network_rule" {
     for_each = try(var.cosmosdb.virtual_network_rules, [])
     content {
       id                                   = virtual_network_rules.value.id
