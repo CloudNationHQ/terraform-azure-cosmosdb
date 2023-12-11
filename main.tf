@@ -43,7 +43,7 @@ resource "azurerm_cosmosdb_account" "db" {
     max_staleness_prefix    = try(var.cosmosdb.consistency_policy.max_staleness_prefix, 100000)
   }
 
-  ip_range_filter = var.cosmosdb.ip_range_filter
+  ip_range_filter = try(var.cosmosdb.ip_range_filter, null)
 
   dynamic "virtual_network_rule" {
     for_each = try(var.cosmosdb.virtual_network_rule, {})
