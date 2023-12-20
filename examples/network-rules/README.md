@@ -5,7 +5,7 @@ This example shows how to use network rules to enhance security with secure acce
 ```hcl
 module "cosmosdb" {
   source  = "cloudnationhq/cosmosdb/azure"
-  version = "~> 0.1"
+  version = "~> 0.3"
 
   cosmosdb = {
     name           = module.naming.cosmosdb_account.name_unique
