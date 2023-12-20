@@ -12,13 +12,13 @@ resource "azurerm_cosmosdb_account" "db" {
   network_acl_bypass_ids    = try(var.cosmosdb.network_acl_bypass_ids, [])
   mongo_server_version      = var.cosmosdb.kind == "MongoDB" ? try(var.cosmosdb.mongo_server_version, "4.2") : null
 
-  access_key_metadata_writes_enabled    = try(var.cosmosdb.enable.access_key_metadata_writes, false)
-  enable_multiple_write_locations       = try(var.cosmosdb.enable.multiple_write_locations, false)
-  local_authentication_disabled         = try(var.cosmosdb.enable.local_authentication_disabled, false)
-  network_acl_bypass_for_azure_services = try(var.cosmosdb.enable.network_acl_bypass_for_azure_services, false)
-  is_virtual_network_filter_enabled     = try(var.cosmosdb.enable_virtual_network_filter, false)
-  public_network_access_enabled         = try(var.cosmosdb.enable.public_network_access, true)
-  analytical_storage_enabled            = try(var.cosmosdb.enable.analytical_storage, false)
+  access_key_metadata_writes_enabled    = try(var.cosmosdb.access_key_metadata_writes, false)
+  enable_multiple_write_locations       = try(var.cosmosdb.multiple_write_locations, false)
+  local_authentication_disabled         = try(var.cosmosdb.local_authentication_disabled, false)
+  network_acl_bypass_for_azure_services = try(var.cosmosdb.network_acl_bypass_for_azure_services, false)
+  is_virtual_network_filter_enabled     = try(var.cosmosdb.network_filter, false)
+  public_network_access_enabled         = try(var.cosmosdb.public_network_access, true)
+  analytical_storage_enabled            = try(var.cosmosdb.analytical_storage, false)
 
   dynamic "capabilities" {
     for_each = try(var.cosmosdb.capabilities, [])
@@ -46,10 +46,10 @@ resource "azurerm_cosmosdb_account" "db" {
   ip_range_filter = try(var.cosmosdb.ip_range_filter, null)
 
   dynamic "virtual_network_rule" {
-    for_each = try(var.cosmosdb.virtual_network_rule, {})
+    for_each = try(var.cosmosdb.network_rules, {})
     content {
       id                                   = virtual_network_rule.value.id
-      ignore_missing_vnet_service_endpoint = virtual_network_rule.value.ignore_missing_vnet_service_endpoint
+      ignore_missing_vnet_service_endpoint = try(virtual_network_rule.value.ignore_missing_vnet_service_endpoint, false)
     }
   }
 }
@@ -95,8 +95,8 @@ resource "azurerm_cosmosdb_table" "tables" {
   throughput          = each.value.throughput
 
   connection {
-    endpoint = azurerm_cosmosdb_account.db.endpoint
-    key      = azurerm_cosmosdb_account.db.primary_master_key
+    host     = azurerm_cosmosdb_account.db.endpoint
+    host_key = azurerm_cosmosdb_account.db.primary_master_key
   }
 }
 

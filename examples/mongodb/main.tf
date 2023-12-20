@@ -26,7 +26,7 @@ module "cosmosdb" {
     location      = module.rg.groups.demo.location
     resourcegroup = module.rg.groups.demo.name
     kind          = "MongoDB"
-    capabilities  = ["EnableMongo"]
+    capabilities  = ["EnableAggregationPipeline", "EnableMongo"]
 
     geo_location = {
       weu = {
