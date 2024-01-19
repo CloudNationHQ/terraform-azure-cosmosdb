@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v0.3.0...v0.4.0) (2024-01-19)
+
+
+### Features
+
+* **deps:** bump github.com/gruntwork-io/terratest in /tests ([#14](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/14)) ([51eab00](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/51eab008982318d745faf1c342f671552631dfed))
+* small refactor workflows ([#15](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/15)) ([ec20b88](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/ec20b88cd0d4526d1ce45c44fcdc258e8c130398))
+
 ## [0.3.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v0.2.0...v0.3.0) (2023-12-20)
 
 
