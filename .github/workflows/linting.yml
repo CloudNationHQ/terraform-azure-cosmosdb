@@ -1,3 +1,5 @@
+name: "linting"
+
 on:
   pull_request:
     types:
@@ -6,5 +8,5 @@ on:
       - synchronize
 
 jobs:
-  validate:
-    uses: cloudnationhq/az-cn-shared-tf-workflows/.github/workflows/linting.yml@main
+  checks:
+    uses: cloudnationhq/terraform-azure-workflows/.github/workflows/linting.yml@main
