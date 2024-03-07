@@ -24,6 +24,18 @@ resource "azurerm_cosmosdb_account" "db" {
   default_identity_type                 = try(var.cosmosdb.default_identity_type, "FirstPartyIdentity")
   tags                                  = try(var.cosmosdb.tags, var.tags, null)
 
+  dynamic "identity" {
+    for_each = contains(keys(var.cosmosdb), "identity") ? [var.cosmosdb.identity] : []
+
+    content {
+      type = identity.value.type
+      identity_ids = contains(["UserAssigned", "SystemAssigned, UserAssigned"], identity.value.type) ? concat(
+        try([azurerm_user_assigned_identity.identity["identity"].id], []),
+        try(lookup(identity.value, "identity_ids", []), [])
+      ) : []
+    }
+  }
+
   dynamic "capabilities" {
     for_each = try(var.cosmosdb.capabilities, [])
 
@@ -151,4 +163,13 @@ resource "azurerm_cosmosdb_sql_container" "sqlc" {
   unique_key {
     paths = each.value.unique_key
   }
+}
+
+resource "azurerm_user_assigned_identity" "identity" {
+  for_each = contains(["UserAssigned", "SystemAssigned, UserAssigned"], try(var.cosmosdb.identity.type, "")) ? { "identity" = var.cosmosdb.identity } : {}
+
+  name                = try(each.value.name, "uai-${var.cosmosdb.name}")
+  resource_group_name = coalesce(lookup(var.cosmosdb, "resourcegroup", null), var.resourcegroup)
+  location            = coalesce(lookup(var.cosmosdb, "location", null), var.location)
+  tags                = try(each.value.tags, var.tags, null)
 }

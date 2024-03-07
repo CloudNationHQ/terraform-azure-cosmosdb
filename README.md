@@ -1,4 +1,4 @@
-# Cosmos DB
+# Cosmos DB Account
 
 This Terraform module streamlines the creation and administration of Cosmos DB resources on Azure, offering customizable options for database accounts, consistency levels, throughput settings, and more, to ensure a highly scalable, globally distributed, and secure data management platform in the cloud.
 
@@ -16,7 +16,8 @@ A last key goal is to separate logic from configuration in the module, thereby e
 
 - supports multiple mongodb databases and collections for efficient data organization
 - enables management of multiple sql databases and containers
-- utilization of terratest for robust validation.
+- utilization of terratest for robust validation
+- supports assigning multiple user assigned identities
 
 ## Requirements
 
@@ -42,6 +43,7 @@ A last key goal is to separate logic from configuration in the module, thereby e
 | [azurerm_cosmosdb_sql_container](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_sql_container) | resource |
 | [azurerm_cosmosdb_table](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_table) | resource |
 | [azurerm_subscription](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subscription) | data source |
+| [azurerm_user_assigned_identity](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | resource |
 
 ## Inputs
 

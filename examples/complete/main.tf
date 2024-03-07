@@ -18,8 +18,7 @@ module "rg" {
 }
 
 module "cosmosdb" {
-  source  = "cloudnationhq/cosmosdb/azure"
-  version = "~> 0.1"
+  source = "../../"
 
   cosmosdb = local.cosmosdb
 }
