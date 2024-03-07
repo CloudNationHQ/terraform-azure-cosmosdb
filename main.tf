@@ -3,8 +3,8 @@ data "azurerm_subscription" "current" {}
 # cosmosdb account
 resource "azurerm_cosmosdb_account" "db" {
   name                      = var.cosmosdb.name
-  location                  = var.cosmosdb.location
-  resource_group_name       = var.cosmosdb.resourcegroup
+  resource_group_name       = coalesce(lookup(var.cosmosdb, "resourcegroup", null), var.resourcegroup)
+  location                  = coalesce(lookup(var.cosmosdb, "location", null), var.location)
   offer_type                = try(var.cosmosdb.offer_type, "Standard")
   kind                      = var.cosmosdb.kind
   enable_automatic_failover = try(var.cosmosdb.enable.automatic_failover, false)
@@ -19,6 +19,10 @@ resource "azurerm_cosmosdb_account" "db" {
   is_virtual_network_filter_enabled     = try(var.cosmosdb.network_filter, false)
   public_network_access_enabled         = try(var.cosmosdb.public_network_access, true)
   analytical_storage_enabled            = try(var.cosmosdb.analytical_storage, false)
+  key_vault_key_id                      = try(var.cosmosdb.key_vault_key_id, null)
+  partition_merge_enabled               = try(var.cosmosdb.partition_merge_enabled, false)
+  default_identity_type                 = try(var.cosmosdb.default_identity_type, "FirstPartyIdentity")
+  tags                                  = try(var.cosmosdb.tags, var.tags, null)
 
   dynamic "capabilities" {
     for_each = try(var.cosmosdb.capabilities, [])
@@ -75,7 +79,6 @@ resource "azurerm_cosmosdb_mongo_collection" "mongodb_collection" {
   account_name        = azurerm_cosmosdb_account.db.name
   resource_group_name = azurerm_cosmosdb_account.db.resource_group_name
   database_name       = azurerm_cosmosdb_mongo_database.mongodb[each.value.db_key].name
-
   default_ttl_seconds = try(each.value.default_ttl_seconds, -1)
   shard_key           = each.value.shard_key
 
