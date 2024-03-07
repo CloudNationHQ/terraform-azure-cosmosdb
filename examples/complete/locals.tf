@@ -6,6 +6,10 @@ locals {
     kind          = "MongoDB"
     capabilities  = ["EnableAggregationPipeline", "EnableMongo"]
 
+    identity = {
+      type = "SystemAssigned, UserAssigned"
+    }
+
     geo_location = {
       neu = {
         location          = "northeurope"
