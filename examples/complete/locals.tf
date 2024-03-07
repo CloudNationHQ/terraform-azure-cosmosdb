@@ -7,8 +7,8 @@ locals {
     capabilities  = ["EnableAggregationPipeline", "EnableMongo"]
 
     geo_location = {
-      weu = {
-        location          = "westeurope"
+      neu = {
+        location          = "northeurope"
         failover_priority = 0
       }
     }
