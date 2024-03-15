@@ -18,6 +18,8 @@ A last key goal is to separate logic from configuration in the module, thereby e
 - enables management of multiple sql databases and containers
 - utilization of terratest for robust validation
 - supports assigning multiple user assigned identities
+- integrates seamlessly with private endpoint capabilities for direct and secure connectivity
+- supports both system and multiple user assigned identities
 
 ## Requirements
 
@@ -82,6 +84,8 @@ Each of these tests contributes to the robustness and resilience of the module. 
 Using a dedicated module, we've developed a naming convention for resources that's based on specific regular expressions for each type, ensuring correct abbreviations and offering flexibility with multiple prefixes and suffixes
 
 Full examples detailing all usages, along with integrations with dependency modules, are located in the examples directory
+
+To streamline integration with the enterprise scale module, private endpoints can also make use of [existing zones](https://github.com/CloudNationHQ/terraform-azure-pdns/tree/main/examples/existing-zone).
 
 ## Authors
 
