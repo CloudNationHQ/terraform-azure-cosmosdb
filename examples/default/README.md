@@ -5,7 +5,7 @@ This example illustrates the default cosmosdb account setup, in its simplest for
 ```hcl
 module "cosmosdb" {
   source  = "cloudnationhq/cosmosdb/azure"
-  version = "~> 0.5"
+  version = "~> 0.6"
 
   cosmosdb = {
     name          = module.naming.cosmosdb_account.name
