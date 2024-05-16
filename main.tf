@@ -44,6 +44,45 @@ resource "azurerm_cosmosdb_account" "db" {
     }
   }
 
+  dynamic "backup" {
+    for_each = try(var.cosmosdb.backup, null) != null ? [1] : []
+
+    content {
+      tier                = try(var.cosmosdb.backup.tier, null)
+      type                = var.cosmosdb.backup.type
+      retention_in_hours  = try(var.cosmosdb.backup.retention_in_hours, null)
+      interval_in_minutes = try(var.cosmosdb.backup.interval_in_minutes, null)
+      storage_redundancy  = try(var.cosmosdb.backup.storage_redundancy, null)
+    }
+  }
+
+  dynamic "restore" {
+    for_each = try(var.cosmosdb.restore, null) != null ? [1] : []
+
+    content {
+      tables_to_restore          = try(var.cosmosdb.restore.tables_to_restore, [])
+      restore_timestamp_in_utc   = var.cosmosdb.restore.restore_timestamp_in_utc
+      source_cosmosdb_account_id = var.cosmosdb.restore.source_cosmosdb_account_id
+
+      dynamic "database" {
+        for_each = try(var.cosmosdb.restore.database, {})
+
+        content {
+          name             = database.value.name
+          collection_names = try(database.value.collection_names, [])
+        }
+      }
+
+      dynamic "gremlin_database" {
+        for_each = try(var.cosmosdb.restore.gremlin_database, {})
+
+        content {
+          name = gremlin_database.value.name
+        }
+      }
+    }
+  }
+
   dynamic "geo_location" {
     for_each = var.cosmosdb.geo_location
     content {
