@@ -6,6 +6,11 @@ locals {
     kind          = "MongoDB"
     capabilities  = ["EnableAggregationPipeline", "EnableMongo"]
 
+    backup = {
+      tier = "Continuous7Days"
+      type = "Continuous"
+    }
+
     identity = {
       type = "SystemAssigned, UserAssigned"
     }
