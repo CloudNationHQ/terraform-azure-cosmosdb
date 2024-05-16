@@ -5,7 +5,7 @@ This example details a cosmosdb setup with a private endpoint, enhancing securit
 ```hcl
 module "privatelink" {
   source  = "cloudnationhq/pe/azure"
-  version = "~> 0.6"
+  version = "~> 0.7"
 
   resourcegroup = module.rg.groups.demo.name
   location      = module.rg.groups.demo.location
