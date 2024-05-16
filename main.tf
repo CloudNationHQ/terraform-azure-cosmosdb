@@ -2,18 +2,18 @@ data "azurerm_subscription" "current" {}
 
 # cosmosdb account
 resource "azurerm_cosmosdb_account" "db" {
-  name                      = var.cosmosdb.name
-  resource_group_name       = coalesce(lookup(var.cosmosdb, "resourcegroup", null), var.resourcegroup)
-  location                  = coalesce(lookup(var.cosmosdb, "location", null), var.location)
-  offer_type                = try(var.cosmosdb.offer_type, "Standard")
-  kind                      = var.cosmosdb.kind
-  enable_automatic_failover = try(var.cosmosdb.enable.automatic_failover, false)
-  enable_free_tier          = try(var.cosmosdb.enable.free_tier, false)
-  network_acl_bypass_ids    = try(var.cosmosdb.network_acl_bypass_ids, [])
-  mongo_server_version      = var.cosmosdb.kind == "MongoDB" ? try(var.cosmosdb.mongo_server_version, "4.2") : null
+  name                       = var.cosmosdb.name
+  resource_group_name        = coalesce(lookup(var.cosmosdb, "resourcegroup", null), var.resourcegroup)
+  location                   = coalesce(lookup(var.cosmosdb, "location", null), var.location)
+  offer_type                 = try(var.cosmosdb.offer_type, "Standard")
+  kind                       = var.cosmosdb.kind
+  automatic_failover_enabled = try(var.cosmosdb.automatic_failover_enabled, false)
+  free_tier_enabled          = try(var.cosmosdb.free_tier_enabled, false)
+  network_acl_bypass_ids     = try(var.cosmosdb.network_acl_bypass_ids, [])
+  mongo_server_version       = var.cosmosdb.kind == "MongoDB" ? try(var.cosmosdb.mongo_server_version, "4.2") : null
 
   access_key_metadata_writes_enabled    = try(var.cosmosdb.access_key_metadata_writes, false)
-  enable_multiple_write_locations       = try(var.cosmosdb.multiple_write_locations, false)
+  multiple_write_locations_enabled      = try(var.cosmosdb.multiple_write_locations_enabled, false)
   local_authentication_disabled         = try(var.cosmosdb.local_authentication_disabled, false)
   network_acl_bypass_for_azure_services = try(var.cosmosdb.network_acl_bypass_for_azure_services, false)
   is_virtual_network_filter_enabled     = try(var.cosmosdb.network_filter, false)
