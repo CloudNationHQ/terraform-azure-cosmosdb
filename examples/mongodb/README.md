@@ -5,7 +5,7 @@ This example demonstrates the setup and use of mongo databases in cosmosdb
 ```hcl
 module "cosmosdb" {
   source  = "cloudnationhq/cosmosdb/azure"
-  version = "~> 0.7"
+  version = "~> 0.8"
 
   cosmosdb = {
     name          = module.naming.cosmosdb_account.name
