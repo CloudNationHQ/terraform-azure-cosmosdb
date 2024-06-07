@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v0.7.0...v0.8.0) (2024-06-07)
+
+
+### Features
+
+* add pull request template ([#37](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/37)) ([1d29b90](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/1d29b906cc251b2958ce835147fc4c0bb93bb08a))
+
 ## [0.7.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v0.6.0...v0.7.0) (2024-05-16)
 
 
