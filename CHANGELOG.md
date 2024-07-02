@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.9.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v0.8.0...v0.9.0) (2024-07-02)
+
+
+### Features
+
+* add issue template ([#41](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/41)) ([06088e0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/06088e087ce4a708a06a2a339b4d3649f85591ca))
+* **deps:** bump github.com/Azure/azure-sdk-for-go/sdk/azidentity ([#39](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/39)) ([8cc2c72](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/8cc2c72d0dbaa32e486e541cf75daa1b8542fb5f))
+* **deps:** bump github.com/Azure/azure-sdk-for-go/sdk/azidentity ([#40](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/40)) ([92ea749](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/92ea7496d60bd1ee0c75d1c381125833e2dfc015))
+
 ## [0.8.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v0.7.0...v0.8.0) (2024-06-07)
 
 
