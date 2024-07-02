@@ -5,7 +5,7 @@ This example highlights the complete usage.
 ```hcl
 module "cosmosdb" {
   source  = "cloudnationhq/cosmosdb/azure"
-  version = "~> 0.8"
+  version = "~> 0.9"
 
   cosmosdb = local.cosmosdb
 }
