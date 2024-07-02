@@ -5,7 +5,7 @@ This example details setting up sql databases in cosmosdb
 ```hcl
 module "cosmosdb" {
   source  = "cloudnationhq/cosmosdb/azure"
-  version = "~> 0.8"
+  version = "~> 0.9"
 
   cosmosdb = {
     name          = module.naming.cosmosdb_account.name
