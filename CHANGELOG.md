@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v0.9.0...v0.10.0) (2024-07-04)
+
+
+### Features
+
+* update contribution docs ([#45](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/45)) ([7c0670f](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/7c0670f850cad43a60d9616c3b5bea77dc5f9c9d))
+
 ## [0.9.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v0.8.0...v0.9.0) (2024-07-02)
 
 
