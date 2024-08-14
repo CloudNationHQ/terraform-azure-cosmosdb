@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v0.11.0...v1.0.0) (2024-08-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* * data structure has changed due to renaming of properties and output variables.
+
+### Features
+
+* aligned several properties ([#52](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/52)) ([eae958d](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/eae958d3a21710ab4a1d79d4a18d4701ff3aa751))
+
 ## [0.11.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v0.10.0...v0.11.0) (2024-08-14)
 
 
