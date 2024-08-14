@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v0.10.0...v0.11.0) (2024-08-14)
+
+
+### Features
+
+* added code of conduct and security documentation ([#49](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/49)) ([98cd2b6](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/98cd2b615e1acd8748333d907be760430ef18cdc))
+
 ## [0.10.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v0.9.0...v0.10.0) (2024-08-14)
 
 
