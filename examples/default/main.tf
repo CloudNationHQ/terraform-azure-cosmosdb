@@ -12,24 +12,27 @@ module "rg" {
   groups = {
     demo = {
       name   = module.naming.resource_group.name
-      region = "westeurope"
+      region = "germanywestcentral"
     }
   }
 }
 
 module "cosmosdb" {
   source  = "cloudnationhq/cosmosdb/azure"
-  version = "~> 0.1"
+  version = "~> 1.0"
 
-  cosmosdb = {
-    name          = module.naming.cosmosdb_account.name_unique
-    location      = module.rg.groups.demo.location
-    resourcegroup = module.rg.groups.demo.name
-    kind          = "MongoDB"
-    capabilities  = ["EnableAggregationPipeline"]
+  account = {
+    name           = module.naming.cosmosdb_account.name_unique
+    location       = module.rg.groups.demo.location
+    resource_group = module.rg.groups.demo.name
+    kind           = "MongoDB"
+    capabilities   = ["EnableAggregationPipeline"]
 
     geo_location = {
-      weu = { location = "westeurope", failover_priority = 0 }
+      francecentral = {
+        location          = "francecentral"
+        failover_priority = 0
+      }
     }
   }
 }

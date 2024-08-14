@@ -2,30 +2,32 @@ data "azurerm_subscription" "current" {}
 
 # cosmosdb account
 resource "azurerm_cosmosdb_account" "db" {
-  name                       = var.cosmosdb.name
-  resource_group_name        = coalesce(lookup(var.cosmosdb, "resourcegroup", null), var.resourcegroup)
-  location                   = coalesce(lookup(var.cosmosdb, "location", null), var.location)
-  offer_type                 = try(var.cosmosdb.offer_type, "Standard")
-  kind                       = var.cosmosdb.kind
-  automatic_failover_enabled = try(var.cosmosdb.automatic_failover_enabled, false)
-  free_tier_enabled          = try(var.cosmosdb.free_tier_enabled, false)
-  network_acl_bypass_ids     = try(var.cosmosdb.network_acl_bypass_ids, [])
-  mongo_server_version       = var.cosmosdb.kind == "MongoDB" ? try(var.cosmosdb.mongo_server_version, "4.2") : null
+  name                       = var.account.name
+  resource_group_name        = coalesce(lookup(var.account, "resource_group", null), var.resource_group)
+  location                   = coalesce(lookup(var.account, "location", null), var.location)
+  offer_type                 = try(var.account.offer_type, "Standard")
+  kind                       = var.account.kind
+  automatic_failover_enabled = try(var.account.automatic_failover_enabled, false)
+  free_tier_enabled          = try(var.account.free_tier_enabled, false)
+  network_acl_bypass_ids     = try(var.account.network_acl_bypass_ids, [])
+  mongo_server_version       = var.account.kind == "MongoDB" ? try(var.account.mongo_server_version, "4.2") : null
 
-  access_key_metadata_writes_enabled    = try(var.cosmosdb.access_key_metadata_writes, false)
-  multiple_write_locations_enabled      = try(var.cosmosdb.multiple_write_locations_enabled, false)
-  local_authentication_disabled         = try(var.cosmosdb.local_authentication_disabled, false)
-  network_acl_bypass_for_azure_services = try(var.cosmosdb.network_acl_bypass_for_azure_services, false)
-  is_virtual_network_filter_enabled     = try(var.cosmosdb.network_filter, false)
-  public_network_access_enabled         = try(var.cosmosdb.public_network_access, true)
-  analytical_storage_enabled            = try(var.cosmosdb.analytical_storage, false)
-  key_vault_key_id                      = try(var.cosmosdb.key_vault_key_id, null)
-  partition_merge_enabled               = try(var.cosmosdb.partition_merge_enabled, false)
-  default_identity_type                 = try(var.cosmosdb.default_identity_type, "FirstPartyIdentity")
-  tags                                  = try(var.cosmosdb.tags, var.tags, null)
+  access_key_metadata_writes_enabled    = try(var.account.access_key_metadata_writes, false)
+  multiple_write_locations_enabled      = try(var.account.multiple_write_locations_enabled, false)
+  local_authentication_disabled         = try(var.account.local_authentication_disabled, false)
+  network_acl_bypass_for_azure_services = try(var.account.network_acl_bypass_for_azure_services, false)
+  is_virtual_network_filter_enabled     = try(var.account.network_filter, false)
+  public_network_access_enabled         = try(var.account.public_network_access, true)
+  analytical_storage_enabled            = try(var.account.analytical_storage, false)
+  key_vault_key_id                      = try(var.account.key_vault_key_id, null)
+  partition_merge_enabled               = try(var.account.partition_merge_enabled, false)
+  create_mode                           = try(var.account.create_mode, null)
+  minimal_tls_version                   = try(var.account.minimal_tls_version, "Tls12")
+  default_identity_type                 = try(var.account.default_identity_type, "FirstPartyIdentity")
+  tags                                  = try(var.account.tags, var.tags, null)
 
   dynamic "identity" {
-    for_each = contains(keys(var.cosmosdb), "identity") ? [var.cosmosdb.identity] : []
+    for_each = contains(keys(var.account), "identity") ? [var.account.identity] : []
 
     content {
       type = identity.value.type
@@ -37,7 +39,7 @@ resource "azurerm_cosmosdb_account" "db" {
   }
 
   dynamic "capabilities" {
-    for_each = try(var.cosmosdb.capabilities, [])
+    for_each = try(var.account.capabilities, [])
 
     content {
       name = capabilities.value
@@ -45,27 +47,27 @@ resource "azurerm_cosmosdb_account" "db" {
   }
 
   dynamic "backup" {
-    for_each = try(var.cosmosdb.backup, null) != null ? [1] : []
+    for_each = try(var.account.backup, null) != null ? [1] : []
 
     content {
-      tier                = try(var.cosmosdb.backup.tier, null)
-      type                = var.cosmosdb.backup.type
-      retention_in_hours  = try(var.cosmosdb.backup.retention_in_hours, null)
-      interval_in_minutes = try(var.cosmosdb.backup.interval_in_minutes, null)
-      storage_redundancy  = try(var.cosmosdb.backup.storage_redundancy, null)
+      tier                = try(var.account.backup.tier, null)
+      type                = var.account.backup.type
+      retention_in_hours  = try(var.account.backup.retention_in_hours, null)
+      interval_in_minutes = try(var.account.backup.interval_in_minutes, null)
+      storage_redundancy  = try(var.account.backup.storage_redundancy, null)
     }
   }
 
   dynamic "restore" {
-    for_each = try(var.cosmosdb.restore, null) != null ? [1] : []
+    for_each = try(var.account.restore, null) != null ? [1] : []
 
     content {
-      tables_to_restore          = try(var.cosmosdb.restore.tables_to_restore, [])
-      restore_timestamp_in_utc   = var.cosmosdb.restore.restore_timestamp_in_utc
-      source_cosmosdb_account_id = var.cosmosdb.restore.source_cosmosdb_account_id
+      tables_to_restore          = try(var.account.restore.tables_to_restore, [])
+      restore_timestamp_in_utc   = var.account.restore.restore_timestamp_in_utc
+      source_cosmosdb_account_id = var.account.restore.source_cosmosdb_account_id
 
       dynamic "database" {
-        for_each = try(var.cosmosdb.restore.database, {})
+        for_each = try(var.account.restore.database, {})
 
         content {
           name             = database.value.name
@@ -74,7 +76,7 @@ resource "azurerm_cosmosdb_account" "db" {
       }
 
       dynamic "gremlin_database" {
-        for_each = try(var.cosmosdb.restore.gremlin_database, {})
+        for_each = try(var.account.restore.gremlin_database, {})
 
         content {
           name = gremlin_database.value.name
@@ -84,7 +86,7 @@ resource "azurerm_cosmosdb_account" "db" {
   }
 
   dynamic "geo_location" {
-    for_each = var.cosmosdb.geo_location
+    for_each = var.account.geo_location
     content {
       location          = geo_location.value.location
       failover_priority = geo_location.value.failover_priority
@@ -93,15 +95,15 @@ resource "azurerm_cosmosdb_account" "db" {
   }
 
   consistency_policy {
-    consistency_level       = try(var.cosmosdb.consistency_policy.level, "BoundedStaleness")
-    max_interval_in_seconds = try(var.cosmosdb.consistency_policy.max_interval_in_seconds, 300)
-    max_staleness_prefix    = try(var.cosmosdb.consistency_policy.max_staleness_prefix, 100000)
+    consistency_level       = try(var.account.consistency_policy.level, "BoundedStaleness")
+    max_interval_in_seconds = try(var.account.consistency_policy.max_interval_in_seconds, 300)
+    max_staleness_prefix    = try(var.account.consistency_policy.max_staleness_prefix, 100000)
   }
 
-  ip_range_filter = try(var.cosmosdb.ip_range_filter, null)
+  ip_range_filter = try(var.account.ip_range_filter, null)
 
   dynamic "virtual_network_rule" {
-    for_each = try(var.cosmosdb.network_rules, {})
+    for_each = try(var.account.network_rules, {})
     content {
       id                                   = virtual_network_rule.value.id
       ignore_missing_vnet_service_endpoint = try(virtual_network_rule.value.ignore_missing_vnet_service_endpoint, false)
@@ -111,7 +113,7 @@ resource "azurerm_cosmosdb_account" "db" {
 
 # mongo databases
 resource "azurerm_cosmosdb_mongo_database" "mongodb" {
-  for_each = try(var.cosmosdb.databases.mongo, {})
+  for_each = try(var.account.databases.mongo, {})
 
   name                = try(each.value.name, "mongo-${each.key}")
   account_name        = azurerm_cosmosdb_account.db.name
@@ -141,7 +143,7 @@ resource "azurerm_cosmosdb_mongo_collection" "mongodb_collection" {
 
 # cosmosdb tables
 resource "azurerm_cosmosdb_table" "tables" {
-  for_each = try(var.cosmosdb.tables, {})
+  for_each = try(var.account.tables, {})
 
   name                = try(each.value.name, "table-${each.key}")
   account_name        = azurerm_cosmosdb_account.db.name
@@ -156,7 +158,7 @@ resource "azurerm_cosmosdb_table" "tables" {
 
 # sql databases
 resource "azurerm_cosmosdb_sql_database" "sqldb" {
-  for_each = try(var.cosmosdb.databases.sql, {})
+  for_each = try(var.account.databases.sql, {})
 
   name                = try(each.value.name, "sql-${each.key}")
   account_name        = azurerm_cosmosdb_account.db.name
@@ -174,7 +176,8 @@ resource "azurerm_cosmosdb_sql_container" "sqlc" {
   resource_group_name   = azurerm_cosmosdb_account.db.resource_group_name
   account_name          = azurerm_cosmosdb_account.db.name
   database_name         = azurerm_cosmosdb_sql_database.sqldb[each.value.db_key].name
-  partition_key_path    = "/definition/id"
+  partition_key_paths   = each.value.partition_key_paths
+  partition_key_kind    = try(each.value.partition_key_kind, "Hash")
   partition_key_version = 1
   throughput            = each.value.throughput
   default_ttl           = try(each.value.default_ttl, -1)
@@ -199,16 +202,20 @@ resource "azurerm_cosmosdb_sql_container" "sqlc" {
     }
   }
 
-  unique_key {
-    paths = each.value.unique_key
+  dynamic "unique_key" {
+    for_each = try(each.value.unique_key, {})
+
+    content {
+      paths = unique_key.value.paths
+    }
   }
 }
 
 resource "azurerm_user_assigned_identity" "identity" {
-  for_each = contains(["UserAssigned", "SystemAssigned, UserAssigned"], try(var.cosmosdb.identity.type, "")) ? { "identity" = var.cosmosdb.identity } : {}
+  for_each = contains(["UserAssigned", "SystemAssigned, UserAssigned"], try(var.account.identity.type, "")) ? { "identity" = var.account.identity } : {}
 
-  name                = try(each.value.name, "uai-${var.cosmosdb.name}")
-  resource_group_name = coalesce(lookup(var.cosmosdb, "resourcegroup", null), var.resourcegroup)
-  location            = coalesce(lookup(var.cosmosdb, "location", null), var.location)
+  name                = try(each.value.name, "uai-${var.account.name}")
+  resource_group_name = coalesce(lookup(var.account, "resource_group", null), var.resource_group)
+  location            = coalesce(lookup(var.account, "location", null), var.location)
   tags                = try(each.value.tags, var.tags, null)
 }

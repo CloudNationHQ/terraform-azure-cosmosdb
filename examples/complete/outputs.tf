@@ -3,6 +3,6 @@ output "account" {
   sensitive = true
 }
 
-output "subscriptionId" {
-  value = module.cosmosdb.subscriptionId
+output "subscription_id" {
+  value = module.cosmosdb.subscription_id
 }
