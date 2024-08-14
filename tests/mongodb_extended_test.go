@@ -56,7 +56,7 @@ func TestCosmosDbAccount(t *testing.T) {
     tfOpts := InitializeTerraform(t)
     defer CleanupTerraform(t, tfOpts)
 
-    subscriptionId := terraform.Output(t, tfOpts, "subscriptionId")
+    subscriptionId := terraform.Output(t, tfOpts, "subscription_id")
     cosmosClient := NewCosmosDbClient(t, subscriptionId)
 
     cosmosDbAccountMap := terraform.OutputMap(t, tfOpts, "account")
