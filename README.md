@@ -63,7 +63,7 @@ End-to-end testing is not conducted on these modules, as they are individual com
 | :-- | :-- | :-- | :-- |
 | `cosmosdb` | describes cosmosdb related configuration | object | yes |
 | `location` | default azure region to be used | string | no |
-| `resource_group` | default resource group to be used | string | no |
+| `resourcegroup` | default resource group to be used | string | no |
 | `tags` | tags to be added to the resources | map(string) | no |
 
 ## Outputs
