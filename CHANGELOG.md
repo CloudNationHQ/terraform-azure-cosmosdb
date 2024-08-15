@@ -5,11 +5,25 @@
 
 ### ⚠ BREAKING CHANGES
 
-* * data structure has changed due to renaming of properties and output variables.
+* data structure has changed due to renaming of properties and output variables.
 
 ### Features
 
 * aligned several properties ([#52](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/52)) ([eae958d](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/eae958d3a21710ab4a1d79d4a18d4701ff3aa751))
+
+### Upgrade from v0.11.0 to v1.0.0:
+
+- Update module reference to: `version = "~> 1.0"`
+- cosmosdb object name has changed to account
+- Rename properties in account object:
+  - resourcegroup -> resource_group
+  - unique_key_paths -> partition_key_paths
+- Rename variable (optional):
+  - resourcegroup -> resource_group
+- Rename output variable:
+  - subscriptionId -> subscription_id'
+- Support for multiple unique_key configurations
+  - The static unique_key block has been replaced with a dynamic block to support multiple unique_key configurations in cosmosdb sql containers.
 
 ## [0.11.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v0.10.0...v0.11.0) (2024-08-14)
 
