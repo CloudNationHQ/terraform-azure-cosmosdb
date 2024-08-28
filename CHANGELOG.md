@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v1.0.0...v1.1.0) (2024-08-28)
+
+
+### Features
+
+* add question template ([#54](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/54)) ([10642a2](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/10642a231cdd77a0ccce4e64348b07c55ca868c4))
+
 ## [1.0.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v0.11.0...v1.0.0) (2024-08-14)
 
 
