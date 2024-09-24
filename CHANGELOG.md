@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v1.1.0...v2.0.0) (2024-09-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* * Version 4 of the azurerm provider includes breaking changes.
+
+### Features
+
+* upgrade azurerm provder to v4 ([#57](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/57)) ([bc9a26e](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/bc9a26e6e23ac01047f8460ec3691f5c8ece6210))
+
 ## [1.1.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v1.0.0...v1.1.0) (2024-08-28)
 
 
