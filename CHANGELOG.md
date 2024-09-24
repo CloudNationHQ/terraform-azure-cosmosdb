@@ -9,7 +9,7 @@
 
 ### Features
 
-* upgrade azurerm provder to v4 ([#57](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/57)) ([bc9a26e](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/bc9a26e6e23ac01047f8460ec3691f5c8ece6210))
+* upgrade azurerm provider to v4 ([#57](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/57)) ([bc9a26e](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/bc9a26e6e23ac01047f8460ec3691f5c8ece6210))
 
 ### Upgrade from v1.1.0 to v2.0.0:
 
