@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v2.2.0...v2.2.1) (2024-11-20)
+
+
+### Bug Fixes
+
+* bounced all modules to latest version in usages and removed unneeded outputs ([#64](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/64)) ([69dc760](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/69dc76093c2fbb3a564a4403fef41893621efa27))
+
 ## [2.2.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v2.1.0...v2.2.0) (2024-11-12)
 
 
