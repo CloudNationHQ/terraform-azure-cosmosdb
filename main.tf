@@ -1,5 +1,3 @@
-data "azurerm_subscription" "current" {}
-
 # cosmosdb account
 resource "azurerm_cosmosdb_account" "db" {
   name                       = var.account.name
