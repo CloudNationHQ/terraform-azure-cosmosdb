@@ -1,6 +1,6 @@
 module "naming" {
   source  = "cloudnationhq/naming/azure"
-  version = "~> 0.1"
+  version = "~> 0.22"
 
   suffix = ["demo", "prd"]
 }
@@ -22,7 +22,7 @@ module "cosmosdb" {
   version = "~> 2.0"
 
   account = {
-    name           = module.naming.cosmosdb_account.name
+    name           = module.naming.cosmosdb_account.name_unique
     location       = module.rg.groups.demo.location
     resource_group = module.rg.groups.demo.name
     kind           = "GlobalDocumentDB"

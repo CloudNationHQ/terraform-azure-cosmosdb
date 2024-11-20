@@ -2,10 +2,6 @@ output "account" {
   value = azurerm_cosmosdb_account.db
 }
 
-output "subscription_id" {
-  value = data.azurerm_subscription.current.subscription_id
-}
-
 output "mongodb" {
   value = azurerm_cosmosdb_mongo_database.mongodb
 }

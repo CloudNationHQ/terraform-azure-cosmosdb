@@ -56,7 +56,6 @@ End-to-end testing is not conducted on these modules, as they are individual com
 | [azurerm_cosmosdb_sql_database.sqldb](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_sql_database) | resource |
 | [azurerm_cosmosdb_table.tables](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_table) | resource |
 | [azurerm_user_assigned_identity.identity](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | resource |
-| [azurerm_subscription.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subscription) | data source |
 
 ## Inputs
 
@@ -76,7 +75,6 @@ End-to-end testing is not conducted on these modules, as they are individual com
 | <a name="output_mongodb_collection"></a> [mongodb\_collection](#output\_mongodb\_collection) | n/a |
 | <a name="output_sql_container"></a> [sql\_container](#output\_sql\_container) | n/a |
 | <a name="output_sqldb"></a> [sqldb](#output\_sqldb) | n/a |
-| <a name="output_subscription_id"></a> [subscription\_id](#output\_subscription\_id) | n/a |
 | <a name="output_tables"></a> [tables](#output\_tables) | n/a |
 <!-- END_TF_DOCS -->
 
