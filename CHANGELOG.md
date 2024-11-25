@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v2.2.1...v3.0.0) (2024-11-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* Data structure mongo databases has changed.
+
+### Features
+
+* allow multiple indexes on mongodb collections ([#66](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/66)) ([a6b131c](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/a6b131c2138ae75a29820203f625d7edb8344a2e))
+
 ## [2.2.1](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v2.2.0...v2.2.1) (2024-11-20)
 
 
