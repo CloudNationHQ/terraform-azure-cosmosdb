@@ -11,6 +11,12 @@
 
 * allow multiple indexes on mongodb collections ([#66](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/66)) ([a6b131c](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/a6b131c2138ae75a29820203f625d7edb8344a2e))
 
+### Upgrade from v2.2.1 to v3.0.0:
+
+- Update module reference to: `version = "~> 3.0"`
+- If using mongodb collection the data structure is slightly changed :
+  - see [examples](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/blob/main/examples/mongodb/main.tf) for the correct usage
+
 ## [2.2.1](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v2.2.0...v2.2.1) (2024-11-20)
 
 
