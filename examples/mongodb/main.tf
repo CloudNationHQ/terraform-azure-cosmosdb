@@ -19,7 +19,7 @@ module "rg" {
 
 module "cosmosdb" {
   source  = "cloudnationhq/cosmosdb/azure"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
   account = {
     name           = module.naming.cosmosdb_account.name_unique
@@ -27,14 +27,12 @@ module "cosmosdb" {
     resource_group = module.rg.groups.demo.name
     kind           = "MongoDB"
     capabilities   = ["EnableAggregationPipeline", "EnableMongo"]
-
     geo_location = {
       francecentral = {
         location          = "francecentral"
         failover_priority = 0
       }
     }
-
     databases = {
       mongo = {
         db1 = {
@@ -42,6 +40,20 @@ module "cosmosdb" {
           collections = {
             col1 = {
               throughput = 400
+              index = {
+                id = {
+                  keys   = ["_id"]
+                  unique = true
+                }
+                email = {
+                  keys   = ["email"]
+                  unique = true
+                }
+                timestamp = {
+                  keys   = ["createdAt"]
+                  unique = false
+                }
+              }
             }
           }
         }
@@ -50,6 +62,16 @@ module "cosmosdb" {
           collections = {
             col1 = {
               throughput = 400
+              index = {
+                id = {
+                  keys   = ["_id"]
+                  unique = true
+                }
+                compound = {
+                  keys   = ["field1", "field2"]
+                  unique = false
+                }
+              }
             }
           }
         }

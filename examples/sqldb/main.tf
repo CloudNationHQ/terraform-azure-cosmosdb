@@ -19,7 +19,7 @@ module "rg" {
 
 module "cosmosdb" {
   source  = "cloudnationhq/cosmosdb/azure"
-  version = "~> 2.0"
+  version = "~> 3.0"
 
   account = {
     name           = module.naming.cosmosdb_account.name_unique
