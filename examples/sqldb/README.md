@@ -1,42 +1,34 @@
-This example details setting up sql databases in cosmosdb
+# Sql Databases
 
-## Usage
+This deploys sql databases
+
+## Types
 
 ```hcl
-module "cosmosdb" {
-  source  = "cloudnationhq/cosmosdb/azure"
-  version = "~> 0.10"
-
-  cosmosdb = {
-    name          = module.naming.cosmosdb_account.name
-    location      = module.rg.groups.demo.location
-    resourcegroup = module.rg.groups.demo.name
-    kind          = "GlobalDocumentDB"
-
-    geo_location = {
-      weu = {
-        location          = "westeurope"
-        failover_priority = 0
-      }
-    }
-
-    databases = {
-      sql = {
-        db1 = {
-          throughput = 400
-          containers = {
-            sqlc1 = {
-              throughput       = 400
-              unique_key_paths = ["/definition/idlong"]
-              index_policy = {
-                indexing_mode  = "consistent"
-                included_paths = ["/*"]
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
+account = object({
+  name           = string
+  location       = string
+  resource_group = string
+  kind           = string
+  geo_location = map(object({
+    location          = string
+    failover_priority = number
+  }))
+  databases = optional(object({
+    sql = optional(map(object({
+      throughput = number
+      containers = optional(map(object({
+        throughput          = number
+        partition_key_paths = list(string)
+        index_policy = object({
+          indexing_mode  = string
+          included_paths = list(string)
+        })
+        unique_key = optional(map(object({
+          paths = list(string)
+        })))
+      })))
+    })))
+  }))
+})
 ```

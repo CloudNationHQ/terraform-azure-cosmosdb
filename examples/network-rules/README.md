@@ -1,32 +1,24 @@
-This example shows how to use network rules to enhance security with secure access control.
+# Network Rules
 
-## Usage
+This deploys network rules
+
+## Types
 
 ```hcl
-module "cosmosdb" {
-  source  = "cloudnationhq/cosmosdb/azure"
-  version = "~> 0.10"
-
-  cosmosdb = {
-    name           = module.naming.cosmosdb_account.name_unique
-    location       = module.rg.groups.demo.location
-    resourcegroup  = module.rg.groups.demo.name
-    kind           = "MongoDB"
-    capabilities   = ["EnableAggregationPipeline", "EnableMongo"]
-    network_filter = true
-
-    geo_location = {
-      weu = {
-        location          = "westeurope"
-        failover_priority = 0
-      }
-    }
-
-    network_rules = {
-      rule1 = {
-        id = module.network.subnets.sn1.id
-      }
-    }
-  }
-}
+account = object({
+  name           = string
+  location       = string
+  resource_group = string
+  kind           = string
+  capabilities   = optional(list(string))
+  network_filter = optional(bool)
+  geo_location = map(object({
+    location          = string
+    failover_priority = number
+  }))
+  network_rules = optional(map(object({
+    id                                   = string
+    ignore_missing_vnet_service_endpoint = optional(bool)
+  })))
+})
 ```

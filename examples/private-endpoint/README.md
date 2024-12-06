@@ -1,31 +1,23 @@
-This example details a cosmosdb setup with a private endpoint, enhancing security by restricting data access to a private network.
+# Private Endpoint
 
-## Usage: private endpoint
+This deploys private endpoint
 
-```hcl
-module "privatelink" {
-  source  = "cloudnationhq/pe/azure"
-  version = "~> 0.10"
-
-  resourcegroup = module.rg.groups.demo.name
-  location      = module.rg.groups.demo.location
-
-  endpoints = local.endpoints
-}
-```
-
-The module uses the below locals for configuration:
+## Types
 
 ```hcl
-locals {
-  endpoints = {
-    mongo = {
-      name                           = module.naming.private_endpoint.name
-      subnet_id                      = module.network.subnets.sn1.id
-      private_connection_resource_id = module.cosmosdb.account.id
-      private_dns_zone_ids           = [module.private_dns.zones.mongo.id]
-      subresource_names              = ["MongoDB"]
-    }
-  }
-}
+account = object({
+  name           = string
+  location       = string
+  resource_group = string
+  kind           = string
+  capabilities   = optional(list(string))
+  geo_location = map(object({
+    location          = string
+    failover_priority = number
+  }))
+})
 ```
+
+## Notes
+
+Additional modules will be used to configure private endpoints and private dns zones.
