@@ -1,74 +1,19 @@
-This example illustrates the default cosmosdb account setup, in its simplest form.
+# Default
 
-## Usage: default
+This example illustrates the default setup, in its simplest form.
 
-```hcl
-module "cosmosdb" {
-  source  = "cloudnationhq/cosmosdb/azure"
-  version = "~> 0.10"
-
-  cosmosdb = {
-    name          = module.naming.cosmosdb_account.name
-    location      = module.rg.groups.demo.location
-    resourcegroup = module.rg.groups.demo.name
-    kind          = "MongoDB"
-    capabilities  = ["EnableAggregationPipeline"]
-
-    geo_location = {
-      weu = { location = "westeurope", failover_priority = 0 }
-    }
-  }
-}
-```
-
-Additionally, for certain scenarios, the example below highlights the ability to use multiple cosmosdb accounts, enabling a broader setup.
-
-## Usage: multiple
+## Types
 
 ```hcl
-module "cosmosdbs" {
-  source  = "cloudnationhq/cosmosdb/azure"
-  version = "~> 0.1"
-
-  for_each = local.cosmosdbs
-
-  cosmosdb = each.value
-}
-```
-
-The module uses a local to iterate, generating a cosmosdb account for each key.
-
-```hcl
-locals {
-  cosmosdbs = {
-    ac1 = {
-      name          = join("-", [module.naming.cosmosdb_account.name_unique, "001"])
-      location      = module.rg.groups.demo.location
-      resourcegroup = module.rg.groups.demo.name
-      kind          = "MongoDB"
-      capabilities  = ["EnableAggregationPipeline"]
-
-      geo_location = {
-        weu = {
-          location          = "westeurope"
-          failover_priority = 0
-        }
-      }
-    }
-    ac2 = {
-      name          = join("-", [module.naming.cosmosdb_account.name_unique, "002"])
-      location      = module.rg.groups.demo.location
-      resourcegroup = module.rg.groups.demo.name
-      kind          = "MongoDB"
-      capabilities  = ["EnableAggregationPipeline"]
-
-      geo_location = {
-        weu = {
-          location          = "westeurope"
-          failover_priority = 0
-        }
-      }
-    }
-  }
-}
+account = object({
+  name           = string
+  location       = string
+  resource_group = string
+  kind           = string
+  capabilities   = optional(list(string))
+  geo_location = map(object({
+    location          = string
+    failover_priority = number
+  }))
+})
 ```
