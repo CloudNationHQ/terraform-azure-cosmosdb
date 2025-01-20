@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.2.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v3.1.0...v3.2.0) (2025-01-20)
+
+
+### Features
+
+* **deps:** bump github.com/gruntwork-io/terratest in /tests ([#71](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/71)) ([4ac2868](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/4ac28681ff34381ce0f57f6557422bc1e96cf608))
+* **deps:** bump golang.org/x/crypto from 0.29.0 to 0.31.0 in /tests ([#74](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/74)) ([43e1b35](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/43e1b35c735af5e50544392dfa38d5df9ff3643f))
+* **deps:** bump golang.org/x/net from 0.31.0 to 0.33.0 in /tests ([#75](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/75)) ([9e361ef](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/9e361ef11741e419dc49d4745a8395bb7c22b639))
+* remove temporary files when deployment tests fails ([#72](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/72)) ([b34b21c](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/b34b21c7679e8a3f71f754b84077f069b2914147))
+
 ## [3.1.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v3.0.0...v3.1.0) (2024-12-06)
 
 
