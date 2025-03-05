@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.3.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v3.2.0...v3.3.0) (2025-03-05)
+
+
+### Features
+
+* **deps:** bump github.com/gruntwork-io/terratest in /tests ([#78](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/78)) ([2b53e13](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/2b53e130c606c4ba47db1abb007bb1abf313f137))
+
+
+### Bug Fixes
+
+* make throughput sql containers and databases optional and set a default for partition key version ([#79](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/79)) ([4401969](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/44019693d2dd31bf3c34e047b27dcd4d7994166f))
+
 ## [3.2.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v3.1.0...v3.2.0) (2025-01-20)
 
 
