@@ -231,7 +231,7 @@ resource "azurerm_cosmosdb_sql_database" "sqldb" {
   name                = try(each.value.name, "sql-${each.key}")
   account_name        = azurerm_cosmosdb_account.db.name
   resource_group_name = azurerm_cosmosdb_account.db.resource_group_name
-  throughput          = each.value.throughput
+  throughput          = try(each.value.throughput, null)
 }
 
 # sql containers
@@ -243,7 +243,7 @@ resource "azurerm_cosmosdb_sql_container" "sqlc" {
         db_key              = db_key
         container_key       = container_key
         name                = try(container.name, "${db_key}-${container_key}")
-        throughput          = container.throughput
+        throughput          = try(container.throughput, null)
         indexing_mode       = container.index_policy.indexing_mode
         included_paths      = try(container.index_policy.included_paths, [])
         excluded_paths      = try(container.index_policy.excluded_paths, [])
@@ -261,7 +261,7 @@ resource "azurerm_cosmosdb_sql_container" "sqlc" {
   database_name         = azurerm_cosmosdb_sql_database.sqldb[each.value.db_key].name
   partition_key_paths   = each.value.partition_key_paths
   partition_key_kind    = each.value.partition_key_kind
-  partition_key_version = 1
+  partition_key_version = try(each.value.partition_key_version, 1)
   throughput            = each.value.throughput
   default_ttl           = each.value.default_ttl
 

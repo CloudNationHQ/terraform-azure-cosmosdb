@@ -104,7 +104,7 @@ For more information, please see our contribution [guidelines](./CONTRIBUTING.md
 
 MIT Licensed. See [LICENSE](./LICENSE) for full details.
 
-## Reference
+## References
 
 - [Documentation](https://learn.microsoft.com/en-us/azure/cosmos-db/)
 - [Rest Api](https://learn.microsoft.com/en-us/rest/api/cosmos-db/)
