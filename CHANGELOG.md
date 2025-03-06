@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.3.1](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v3.3.0...v3.3.1) (2025-03-06)
+
+
+### Bug Fixes
+
+* fix typo analytical storage enabled on cosmosdb accounts ([#81](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/81)) ([14cc70c](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/14cc70cd70270827251ce884906a30ee4236e940))
+* fix typo public network access enabled ([#83](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/83)) ([196541d](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/196541d3280df153c03997d611a04a6546d3149f))
+
 ## [3.3.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v3.2.0...v3.3.0) (2025-03-05)
 
 
