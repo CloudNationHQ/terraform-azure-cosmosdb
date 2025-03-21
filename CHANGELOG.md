@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v3.3.1...v3.4.0) (2025-03-21)
+
+
+### Features
+
+* enhance cosmosdb configuration with autoscale and analytical storage options ([#85](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/85)) ([3084552](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/3084552e3f2e075c713b0fbb29432621279a9c43))
+
 ## [3.3.1](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v3.3.0...v3.3.1) (2025-03-06)
 
 
