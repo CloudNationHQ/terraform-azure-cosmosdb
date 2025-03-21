@@ -31,10 +31,11 @@ resource "azurerm_cosmosdb_account" "db" {
     for_each = lookup(var.account, "cors_rule", null) != null ? { "cors_rule" = var.account.cors_rule } : {}
 
     content {
-      allowed_headers = cors_rule.value.allowed_headers
-      allowed_methods = cors_rule.value.allowed_methods
-      allowed_origins = cors_rule.value.allowed_origins
-      exposed_headers = cors_rule.value.exposed_headers
+      allowed_headers    = cors_rule.value.allowed_headers
+      allowed_methods    = cors_rule.value.allowed_methods
+      allowed_origins    = cors_rule.value.allowed_origins
+      exposed_headers    = cors_rule.value.exposed_headers
+      max_age_in_seconds = cors_rule.value.max_age_in_seconds
     }
   }
 
@@ -111,7 +112,8 @@ resource "azurerm_cosmosdb_account" "db" {
         )
 
         content {
-          name = gremlin_database.value.name
+          name        = gremlin_database.value.name
+          graph_names = gremlin_database.value.graph_names
         }
       }
     }
@@ -154,7 +156,15 @@ resource "azurerm_cosmosdb_mongo_database" "mongodb" {
   name                = lookup(each.value, "name", "mongo-${each.key}")
   account_name        = azurerm_cosmosdb_account.db.name
   resource_group_name = azurerm_cosmosdb_account.db.resource_group_name
-  throughput          = each.value.throughput
+  throughput          = try(each.value.throughput, null)
+
+  dynamic "autoscale_settings" {
+    for_each = lookup(each.value, "autoscale_settings", null) != null ? { "autoscale_settings" = each.value.autoscale_settings } : {}
+
+    content {
+      max_throughput = autoscale_settings.value.max_throughput
+    }
+  }
 }
 
 resource "azurerm_cosmosdb_mongo_collection" "mongodb_collection" {
@@ -162,12 +172,14 @@ resource "azurerm_cosmosdb_mongo_collection" "mongodb_collection" {
     for db_key, db in lookup(lookup(var.account, "databases", {}), "mongo", {}) : {
       for collection_key, collection in lookup(db, "collections", {}) :
       "${db_key}.${collection_key}" => {
-        db_key              = db_key
-        collection_key      = collection_key
-        name                = lookup(collection, "name", "${db_key}-${collection_key}")
-        throughput          = collection.throughput
-        shard_key           = lookup(collection, "shard_key", null)
-        default_ttl_seconds = lookup(collection, "default_ttl_seconds", -1)
+        db_key                 = db_key
+        collection_key         = collection_key
+        name                   = lookup(collection, "name", "${db_key}-${collection_key}")
+        throughput             = try(collection.throughput, null)
+        autoscale_settings     = try(collection.autoscale_settings, null)
+        shard_key              = lookup(collection, "shard_key", null)
+        analytical_storage_ttl = try(collection.analytical_storage_ttl, null)
+        default_ttl_seconds    = lookup(collection, "default_ttl_seconds", -1)
         index = merge(
           {
             id = {
@@ -181,13 +193,22 @@ resource "azurerm_cosmosdb_mongo_collection" "mongodb_collection" {
     }
   ]...)
 
-  name                = lookup(each.value, "name", each.key)
-  throughput          = each.value.throughput
-  account_name        = azurerm_cosmosdb_account.db.name
-  resource_group_name = azurerm_cosmosdb_account.db.resource_group_name
-  database_name       = azurerm_cosmosdb_mongo_database.mongodb[each.value.db_key].name
-  default_ttl_seconds = each.value.default_ttl_seconds
-  shard_key           = each.value.shard_key
+  name                   = lookup(each.value, "name", each.key)
+  throughput             = each.value.autoscale_settings != null ? null : try(each.value.throughput, 400)
+  account_name           = azurerm_cosmosdb_account.db.name
+  resource_group_name    = azurerm_cosmosdb_account.db.resource_group_name
+  database_name          = azurerm_cosmosdb_mongo_database.mongodb[each.value.db_key].name
+  default_ttl_seconds    = each.value.default_ttl_seconds
+  shard_key              = each.value.shard_key
+  analytical_storage_ttl = each.value.analytical_storage_ttl
+
+  dynamic "autoscale_settings" {
+    for_each = each.value.autoscale_settings != null ? { "autoscale_settings" = each.value.autoscale_settings } : {}
+
+    content {
+      max_throughput = autoscale_settings.value.max_throughput
+    }
+  }
 
   dynamic "index" {
     for_each = each.value.index
@@ -207,7 +228,15 @@ resource "azurerm_cosmosdb_table" "tables" {
   name                = try(each.value.name, "table-${each.key}")
   account_name        = azurerm_cosmosdb_account.db.name
   resource_group_name = azurerm_cosmosdb_account.db.resource_group_name
-  throughput          = each.value.throughput
+  throughput          = try(each.value.throughput, null)
+
+  dynamic "autoscale_settings" {
+    for_each = lookup(each.value, "autoscale_settings", null) != null ? { "autoscale_settings" = each.value.autoscale_settings } : {}
+
+    content {
+      max_throughput = autoscale_settings.value.max_throughput
+    }
+  }
 
   connection {
     host            = azurerm_cosmosdb_account.db.endpoint
@@ -232,6 +261,14 @@ resource "azurerm_cosmosdb_sql_database" "sqldb" {
   account_name        = azurerm_cosmosdb_account.db.name
   resource_group_name = azurerm_cosmosdb_account.db.resource_group_name
   throughput          = try(each.value.throughput, null)
+
+  dynamic "autoscale_settings" {
+    for_each = lookup(each.value, "autoscale_settings", null) != null ? { "autoscale_settings" = each.value.autoscale_settings } : {}
+
+    content {
+      max_throughput = autoscale_settings.value.max_throughput
+    }
+  }
 }
 
 # sql containers
@@ -240,30 +277,53 @@ resource "azurerm_cosmosdb_sql_container" "sqlc" {
     for db_key, db in try(var.account.databases.sql, {}) : {
       for container_key, container in try(db.containers, {}) :
       "${db_key}.${container_key}" => {
-        db_key              = db_key
-        container_key       = container_key
-        name                = try(container.name, "${db_key}-${container_key}")
-        throughput          = try(container.throughput, null)
-        indexing_mode       = container.index_policy.indexing_mode
-        included_paths      = try(container.index_policy.included_paths, [])
-        excluded_paths      = try(container.index_policy.excluded_paths, [])
-        unique_key          = try(container.unique_key, {})
-        partition_key_paths = container.partition_key_paths
-        partition_key_kind  = try(container.partition_key_kind, "Hash")
-        default_ttl         = try(container.default_ttl, -1)
+        db_key                     = db_key
+        container_key              = container_key
+        name                       = try(container.name, "${db_key}-${container_key}")
+        throughput                 = try(container.throughput, null)
+        autoscale_settings         = try(container.autoscale_settings, null)
+        analytical_storage_ttl     = try(container.analytical_storage_ttl, null)
+        conflict_resolution_policy = try(container.conflict_resolution_policy, null)
+        indexing_mode              = container.index_policy.indexing_mode
+        included_paths             = try(container.index_policy.included_paths, [])
+        excluded_paths             = try(container.index_policy.excluded_paths, [])
+        unique_key                 = try(container.unique_key, {})
+        composite_index            = try(container.index_policy.composite_index, [])
+        spatial_index              = try(container.index_policy.spatial_index, [])
+        partition_key_paths        = container.partition_key_paths
+        partition_key_kind         = try(container.partition_key_kind, "Hash")
+        default_ttl                = try(container.default_ttl, -1)
       }
     }
   ]...)
 
-  name                  = try(each.value.name, each.key)
-  resource_group_name   = azurerm_cosmosdb_account.db.resource_group_name
-  account_name          = azurerm_cosmosdb_account.db.name
-  database_name         = azurerm_cosmosdb_sql_database.sqldb[each.value.db_key].name
-  partition_key_paths   = each.value.partition_key_paths
-  partition_key_kind    = each.value.partition_key_kind
-  partition_key_version = try(each.value.partition_key_version, 1)
-  throughput            = each.value.throughput
-  default_ttl           = each.value.default_ttl
+  name                   = try(each.value.name, each.key)
+  resource_group_name    = azurerm_cosmosdb_account.db.resource_group_name
+  account_name           = azurerm_cosmosdb_account.db.name
+  database_name          = azurerm_cosmosdb_sql_database.sqldb[each.value.db_key].name
+  partition_key_paths    = each.value.partition_key_paths
+  partition_key_kind     = each.value.partition_key_kind
+  partition_key_version  = try(each.value.partition_key_version, 1)
+  throughput             = try(each.value.autoscale_settings == null ? each.value.throughput : null, each.value.throughput)
+  default_ttl            = each.value.default_ttl
+  analytical_storage_ttl = each.value.analytical_storage_ttl
+
+  dynamic "autoscale_settings" {
+    for_each = each.value.autoscale_settings == null ? [] : [each.value.autoscale_settings]
+    content {
+      max_throughput = autoscale_settings.value.max_throughput
+    }
+  }
+
+  dynamic "conflict_resolution_policy" {
+    for_each = each.value.conflict_resolution_policy != null ? [each.value.conflict_resolution_policy] : []
+
+    content {
+      mode                          = conflict_resolution_policy.value.mode
+      conflict_resolution_path      = try(conflict_resolution_policy.value.conflict_resolution_path, null)
+      conflict_resolution_procedure = try(conflict_resolution_policy.value.conflict_resolution_procedure, null)
+    }
+  }
 
   indexing_policy {
     indexing_mode = each.value.indexing_mode
@@ -281,6 +341,29 @@ resource "azurerm_cosmosdb_sql_container" "sqlc" {
 
       content {
         path = excluded_path.value
+      }
+    }
+
+    dynamic "composite_index" {
+      for_each = each.value.composite_index
+
+      content {
+        dynamic "index" {
+          for_each = composite_index.value.index
+
+          content {
+            path  = index.value.path
+            order = index.value.order
+          }
+        }
+      }
+    }
+
+    dynamic "spatial_index" {
+      for_each = each.value.spatial_index != null ? [each.value.spatial_index] : []
+
+      content {
+        path = spatial_index.value.path
       }
     }
   }
