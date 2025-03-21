@@ -58,6 +58,10 @@ This Terraform module streamlines the creation and administration of Cosmos DB r
 | <a name="output_tables"></a> [tables](#output\_tables) | n/a |
 <!-- END_TF_DOCS -->
 
+## Goals
+
+For more information, please see our [goals and non-goals](./GOALS.md).
+
 ## Testing
 
 For more information, please see our testing [guidelines](./TESTING.md)
