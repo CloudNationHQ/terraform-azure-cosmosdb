@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v3.5.0...v3.6.0) (2025-03-25)
+
+
+### Features
+
+* format documentation to include type definitions ([#89](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/89)) ([a7232d5](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/a7232d52f016cee3192d8d6de5278c66c1c8efec))
+
 ## [3.5.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v3.4.0...v3.5.0) (2025-03-25)
 
 
