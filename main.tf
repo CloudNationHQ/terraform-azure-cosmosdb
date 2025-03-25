@@ -345,7 +345,9 @@ resource "azurerm_cosmosdb_sql_container" "sqlc" {
     }
 
     dynamic "composite_index" {
-      for_each = each.value.composite_index
+      for_each = try(
+        each.value.composite_index, {}
+      )
 
       content {
         dynamic "index" {
@@ -360,7 +362,9 @@ resource "azurerm_cosmosdb_sql_container" "sqlc" {
     }
 
     dynamic "spatial_index" {
-      for_each = each.value.spatial_index != null ? [each.value.spatial_index] : []
+      for_each = try(
+        each.value.spatial_index, {}
+      )
 
       content {
         path = spatial_index.value.path
