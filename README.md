@@ -41,7 +41,6 @@ The following resources are used by this module:
 - [azurerm_cosmosdb_sql_container.sqlc](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_sql_container) (resource)
 - [azurerm_cosmosdb_sql_database.sqldb](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_sql_database) (resource)
 - [azurerm_cosmosdb_table.tables](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_table) (resource)
-- [azurerm_user_assigned_identity.identity](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) (resource)
 
 ## Required Inputs
 
@@ -56,8 +55,8 @@ Type:
 ```hcl
 object({
     name                                  = string
-    resource_group                        = optional(string, null)
-    location                              = optional(string, null)
+    resource_group_name                   = optional(string)
+    location                              = optional(string)
     offer_type                            = optional(string, "Standard")
     kind                                  = string
     automatic_failover_enabled            = optional(bool, false)
@@ -71,14 +70,14 @@ object({
     network_filter                        = optional(bool, false)
     public_network_access                 = optional(bool, true)
     analytical_storage_enabled            = optional(bool, false)
-    key_vault_key_id                      = optional(string, null)
+    key_vault_key_id                      = optional(string)
     partition_merge_enabled               = optional(bool, false)
-    create_mode                           = optional(string, null)
+    create_mode                           = optional(string)
     minimal_tls_version                   = optional(string, "Tls12")
     default_identity_type                 = optional(string, "FirstPartyIdentity")
-    ip_range_filter                       = optional(set(string), null)
-    tags                                  = optional(map(string), null)
-    managed_hsm_key_id                    = optional(string, null)
+    ip_range_filter                       = optional(set(string))
+    tags                                  = optional(map(string))
+    managed_hsm_key_id                    = optional(string)
     burst_capacity_enabled                = optional(bool, false)
     cors_rule = optional(object({
       allowed_headers    = list(string)
@@ -86,27 +85,27 @@ object({
       allowed_origins    = list(string)
       exposed_headers    = list(string)
       max_age_in_seconds = number
-    }), null)
+    }))
     capacity = optional(object({
       total_throughput_limit = number
-    }), null)
+    }))
     identity = optional(object({
       type         = string
-      name         = optional(string, null)
+      name         = optional(string)
       identity_ids = optional(list(string), [])
-      tags         = optional(map(string), null)
-    }), null)
+      tags         = optional(map(string))
+    }))
     capabilities = optional(list(string), [])
     analytical_storage = optional(object({
       schema_type = string
-    }), null)
+    }))
     backup = optional(object({
       type                = string
-      tier                = optional(string, null)
-      retention_in_hours  = optional(number, null)
-      interval_in_minutes = optional(number, null)
-      storage_redundancy  = optional(string, null)
-    }), null)
+      tier                = optional(string)
+      retention_in_hours  = optional(number)
+      interval_in_minutes = optional(number)
+      storage_redundancy  = optional(string)
+    }))
     restore = optional(object({
       tables_to_restore          = optional(list(string), [])
       restore_timestamp_in_utc   = string
@@ -119,7 +118,7 @@ object({
         name        = string
         graph_names = list(string)
       })), {})
-    }), null)
+    }))
     geo_location = map(object({
       location          = string
       failover_priority = number
@@ -136,19 +135,19 @@ object({
     })), {})
     databases = optional(object({
       mongo = optional(map(object({
-        name       = optional(string, null)
-        throughput = optional(number, null)
+        name       = optional(string)
+        throughput = optional(number)
         autoscale_settings = optional(object({
           max_throughput = number
-        }), null)
+        }))
         collections = optional(map(object({
-          name       = optional(string, null)
-          throughput = optional(number, null)
+          name       = optional(string)
+          throughput = optional(number)
           autoscale_settings = optional(object({
             max_throughput = number
-          }), null)
-          shard_key              = optional(string, null)
-          analytical_storage_ttl = optional(number, null)
+          }))
+          shard_key              = optional(string)
+          analytical_storage_ttl = optional(number)
           default_ttl_seconds    = optional(number, -1)
           index = optional(map(object({
             keys   = list(string)
@@ -157,25 +156,25 @@ object({
         })), {})
       })), {})
       sql = optional(map(object({
-        name       = optional(string, null)
-        throughput = optional(number, null)
+        name       = optional(string)
+        throughput = optional(number)
         autoscale_settings = optional(object({
           max_throughput = number
-        }), null)
+        }))
         containers = optional(map(object({
-          name       = optional(string, null)
-          throughput = optional(number, null)
+          name       = optional(string)
+          throughput = optional(number)
           autoscale_settings = optional(object({
             max_throughput = number
-          }), null)
-          analytical_storage_ttl = optional(number, null)
+          }))
+          analytical_storage_ttl = optional(number)
           conflict_resolution_policy = optional(object({
             mode                          = string
-            conflict_resolution_path      = optional(string, null)
-            conflict_resolution_procedure = optional(string, null)
-          }), null)
-          index_policy = object({
-            indexing_mode  = string
+            conflict_resolution_path      = optional(string)
+            conflict_resolution_procedure = optional(string)
+          }))
+          index_policy = optional(object({
+            indexing_mode  = optional(string, "consistent")
             included_paths = optional(list(string), [])
             excluded_paths = optional(list(string), [])
             composite_index = optional(map(object({
@@ -187,7 +186,7 @@ object({
             spatial_index = optional(map(object({
               path = string
             })), {})
-          })
+          }), {})
           unique_key = optional(map(object({
             paths = list(string)
           })), {})
@@ -199,20 +198,11 @@ object({
       })), {})
     }), {})
     tables = optional(map(object({
-      name       = optional(string, null)
-      throughput = optional(number, null)
+      name       = optional(string)
+      throughput = optional(number)
       autoscale_settings = optional(object({
         max_throughput = number
-      }), null)
-      connection = optional(object({
-        port            = optional(number, null)
-        proxy_user_name = optional(string, null)
-        target_platform = optional(string, null)
-        type            = optional(string, null)
-        user            = optional(string, null)
-        password        = optional(string, null)
-        script_path     = optional(string, null)
-      }), null)
+      }))
     })), {})
   })
 ```
@@ -229,7 +219,7 @@ Type: `string`
 
 Default: `null`
 
-### <a name="input_resource_group"></a> [resource\_group](#input\_resource\_group)
+### <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name)
 
 Description: default resource group to be used.
 
