@@ -1,5 +1,17 @@
 # Changelog
 
+## [4.0.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v3.6.0...v4.0.0) (2025-09-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* this change causes recreates
+
+### Features
+
+* add type definitions and changed data structure ([#95](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/95)) ([2ca31fd](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/2ca31fd8d9088017f4975d445ab287cc6dbd86be))
+* **deps:** bump github.com/ulikunitz/xz from 0.5.10 to 0.5.14 in /tests ([#94](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/94)) ([93c49ba](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/93c49baab720255748123bdee370e2aa10602c03))
+
 ## [3.6.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v3.5.0...v3.6.0) (2025-03-25)
 
 
