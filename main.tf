@@ -3,8 +3,8 @@ resource "azurerm_cosmosdb_account" "db" {
 
   resource_group_name = coalesce(
     lookup(
-      var.account, "resource_group", null
-    ), var.resource_group
+      var.account, "resource_group_name", null
+    ), var.resource_group_name
   )
 
   location = coalesce(
@@ -18,7 +18,7 @@ resource "azurerm_cosmosdb_account" "db" {
   automatic_failover_enabled            = var.account.automatic_failover_enabled
   free_tier_enabled                     = var.account.free_tier_enabled
   network_acl_bypass_ids                = var.account.network_acl_bypass_ids
-  mongo_server_version                  = var.account.kind == "MongoDB" ? try(var.account.mongo_server_version, "4.2") : null
+  mongo_server_version                  = var.account.kind == "MongoDB" ? var.account.mongo_server_version : null
   managed_hsm_key_id                    = var.account.managed_hsm_key_id
   burst_capacity_enabled                = var.account.burst_capacity_enabled
   access_key_metadata_writes_enabled    = var.account.access_key_metadata_writes
@@ -40,7 +40,7 @@ resource "azurerm_cosmosdb_account" "db" {
   )
 
   dynamic "cors_rule" {
-    for_each = lookup(var.account, "cors_rule", null) != null ? { "cors_rule" = var.account.cors_rule } : {}
+    for_each = var.account.cors_rule != null ? [var.account.cors_rule] : []
 
     content {
       allowed_headers    = cors_rule.value.allowed_headers
@@ -52,7 +52,7 @@ resource "azurerm_cosmosdb_account" "db" {
   }
 
   dynamic "capacity" {
-    for_each = lookup(var.account, "capacity", null) != null ? { "capacity" = var.account.capacity } : {}
+    for_each = var.account.capacity != null ? [var.account.capacity] : []
 
     content {
       total_throughput_limit = capacity.value.total_throughput_limit
@@ -60,14 +60,11 @@ resource "azurerm_cosmosdb_account" "db" {
   }
 
   dynamic "identity" {
-    for_each = contains(keys(var.account), "identity") && var.account.identity != null ? [var.account.identity] : []
+    for_each = var.account.identity != null ? [var.account.identity] : []
 
     content {
-      type = identity.value.type
-      identity_ids = contains(["UserAssigned", "SystemAssigned, UserAssigned"], identity.value.type) ? concat(
-        try([azurerm_user_assigned_identity.identity["identity"].id], []),
-        try(lookup(identity.value, "identity_ids", []), [])
-      ) : []
+      type         = identity.value.type
+      identity_ids = identity.value.identity_ids
     }
   }
 
@@ -80,7 +77,7 @@ resource "azurerm_cosmosdb_account" "db" {
   }
 
   dynamic "analytical_storage" {
-    for_each = lookup(var.account, "analytical_storage", null) != null ? { "analytical_storage" = var.account.analytical_storage } : {}
+    for_each = var.account.analytical_storage != null ? [var.account.analytical_storage] : []
 
     content {
       schema_type = analytical_storage.value.schema_type
@@ -88,7 +85,7 @@ resource "azurerm_cosmosdb_account" "db" {
   }
 
   dynamic "backup" {
-    for_each = lookup(var.account, "backup", null) != null ? { "backup" = var.account.backup } : {}
+    for_each = var.account.backup != null ? [var.account.backup] : []
 
     content {
       type                = backup.value.type
@@ -100,7 +97,7 @@ resource "azurerm_cosmosdb_account" "db" {
   }
 
   dynamic "restore" {
-    for_each = lookup(var.account, "restore", null) != null ? { "restore" = var.account.restore } : {}
+    for_each = var.account.restore != null ? [var.account.restore] : []
 
     content {
       tables_to_restore          = restore.value.tables_to_restore
@@ -108,9 +105,7 @@ resource "azurerm_cosmosdb_account" "db" {
       source_cosmosdb_account_id = restore.value.source_cosmosdb_account_id
 
       dynamic "database" {
-        for_each = lookup(
-          var.account.restore, "database", {}
-        )
+        for_each = try(restore.value.database, {})
 
         content {
           name             = database.value.name
@@ -119,9 +114,7 @@ resource "azurerm_cosmosdb_account" "db" {
       }
 
       dynamic "gremlin_database" {
-        for_each = lookup(
-          var.account.restore, "gremlin_database", {}
-        )
+        for_each = try(restore.value.gremlin_database, {})
 
         content {
           name        = gremlin_database.value.name
@@ -148,9 +141,7 @@ resource "azurerm_cosmosdb_account" "db" {
   }
 
   dynamic "virtual_network_rule" {
-    for_each = lookup(
-      var.account, "network_rules", {}
-    )
+    for_each = try(var.account.network_rules, {})
 
     content {
       id                                   = virtual_network_rule.value.id
@@ -161,9 +152,7 @@ resource "azurerm_cosmosdb_account" "db" {
 
 # mongo databases
 resource "azurerm_cosmosdb_mongo_database" "mongodb" {
-  for_each = lookup(
-    lookup(var.account, "databases", {}), "mongo", {}
-  )
+  for_each = try(var.account.databases.mongo, {})
 
   name = coalesce(
     lookup(each.value, "name", null
@@ -175,7 +164,7 @@ resource "azurerm_cosmosdb_mongo_database" "mongodb" {
   throughput          = each.value.throughput
 
   dynamic "autoscale_settings" {
-    for_each = lookup(each.value, "autoscale_settings", null) != null ? { "autoscale_settings" = each.value.autoscale_settings } : {}
+    for_each = each.value.autoscale_settings != null ? [each.value.autoscale_settings] : []
 
     content {
       max_throughput = autoscale_settings.value.max_throughput
@@ -216,7 +205,7 @@ resource "azurerm_cosmosdb_mongo_collection" "mongodb_collection" {
   ]...)
 
   name                   = each.value.name
-  throughput             = each.value.autoscale_settings != null ? null : try(each.value.throughput, 400)
+  throughput             = each.value.autoscale_settings != null ? null : each.value.throughput
   account_name           = azurerm_cosmosdb_account.db.name
   resource_group_name    = azurerm_cosmosdb_account.db.resource_group_name
   database_name          = azurerm_cosmosdb_mongo_database.mongodb[each.value.db_key].name
@@ -243,9 +232,7 @@ resource "azurerm_cosmosdb_mongo_collection" "mongodb_collection" {
 
 # cosmosdb tables
 resource "azurerm_cosmosdb_table" "tables" {
-  for_each = lookup(
-    var.account, "tables", {}
-  )
+  for_each = try(var.account.tables, {})
 
   name = coalesce(
     lookup(each.value, "name", null
@@ -257,31 +244,18 @@ resource "azurerm_cosmosdb_table" "tables" {
   throughput          = each.value.throughput
 
   dynamic "autoscale_settings" {
-    for_each = lookup(each.value, "autoscale_settings", null) != null ? { "autoscale_settings" = each.value.autoscale_settings } : {}
+    for_each = each.value.autoscale_settings != null ? [each.value.autoscale_settings] : []
 
     content {
       max_throughput = autoscale_settings.value.max_throughput
     }
   }
 
-  connection {
-    host            = azurerm_cosmosdb_account.db.endpoint
-    host_key        = azurerm_cosmosdb_account.db.primary_master_key
-    port            = each.value.connection.port
-    proxy_user_name = each.value.connection.proxy_user_name
-    target_platform = each.value.connection.target_platform
-    type            = each.value.connection.type
-    user            = each.value.connection.user
-    password        = each.value.connection.password
-    script_path     = each.value.connection.script_path
-  }
 }
 
 # sql databases
 resource "azurerm_cosmosdb_sql_database" "sqldb" {
-  for_each = lookup(
-    lookup(var.account, "databases", {}), "sql", {}
-  )
+  for_each = try(var.account.databases.sql, {})
 
   name = coalesce(
     lookup(each.value, "name", null
@@ -293,7 +267,7 @@ resource "azurerm_cosmosdb_sql_database" "sqldb" {
   throughput          = each.value.throughput
 
   dynamic "autoscale_settings" {
-    for_each = lookup(each.value, "autoscale_settings", null) != null ? { "autoscale_settings" = each.value.autoscale_settings } : {}
+    for_each = each.value.autoscale_settings != null ? [each.value.autoscale_settings] : []
 
     content {
       max_throughput = autoscale_settings.value.max_throughput
@@ -313,12 +287,8 @@ resource "azurerm_cosmosdb_sql_container" "sqlc" {
         autoscale_settings         = container.autoscale_settings
         analytical_storage_ttl     = container.analytical_storage_ttl
         conflict_resolution_policy = container.conflict_resolution_policy
-        indexing_mode              = container.index_policy.indexing_mode
-        included_paths             = container.index_policy.included_paths
-        excluded_paths             = container.index_policy.excluded_paths
+        index_policy               = container.index_policy
         unique_key                 = container.unique_key
-        composite_index            = container.index_policy.composite_index
-        spatial_index              = container.index_policy.spatial_index
         partition_key_paths        = container.partition_key_paths
         partition_key_kind         = container.partition_key_kind
         default_ttl                = container.default_ttl
@@ -339,7 +309,7 @@ resource "azurerm_cosmosdb_sql_container" "sqlc" {
   partition_key_paths    = each.value.partition_key_paths
   partition_key_kind     = each.value.partition_key_kind
   partition_key_version  = each.value.partition_key_version
-  throughput             = try(each.value.autoscale_settings == null ? each.value.throughput : null, each.value.throughput)
+  throughput             = each.value.autoscale_settings != null ? null : each.value.throughput
   default_ttl            = each.value.default_ttl
   analytical_storage_ttl = each.value.analytical_storage_ttl
 
@@ -360,49 +330,49 @@ resource "azurerm_cosmosdb_sql_container" "sqlc" {
     }
   }
 
-  indexing_policy {
-    indexing_mode = each.value.indexing_mode
+  dynamic "indexing_policy" {
+    for_each = each.value.index_policy != null ? [each.value.index_policy] : []
 
-    dynamic "included_path" {
-      for_each = each.value.included_paths
+    content {
+      indexing_mode = indexing_policy.value.indexing_mode
 
-      content {
-        path = included_path.value
+      dynamic "included_path" {
+        for_each = indexing_policy.value.included_paths
+
+        content {
+          path = included_path.value
+        }
       }
-    }
 
-    dynamic "excluded_path" {
-      for_each = each.value.excluded_paths
+      dynamic "excluded_path" {
+        for_each = indexing_policy.value.excluded_paths
 
-      content {
-        path = excluded_path.value
+        content {
+          path = excluded_path.value
+        }
       }
-    }
 
-    dynamic "composite_index" {
-      for_each = try(
-        each.value.composite_index, {}
-      )
+      dynamic "composite_index" {
+        for_each = indexing_policy.value.composite_index
 
-      content {
-        dynamic "index" {
-          for_each = composite_index.value.index
+        content {
+          dynamic "index" {
+            for_each = composite_index.value.index
 
-          content {
-            path  = index.value.path
-            order = index.value.order
+            content {
+              path  = index.value.path
+              order = index.value.order
+            }
           }
         }
       }
-    }
 
-    dynamic "spatial_index" {
-      for_each = try(
-        each.value.spatial_index, {}
-      )
+      dynamic "spatial_index" {
+        for_each = indexing_policy.value.spatial_index
 
-      content {
-        path = spatial_index.value.path
+        content {
+          path = spatial_index.value.path
+        }
       }
     }
   }
@@ -414,27 +384,4 @@ resource "azurerm_cosmosdb_sql_container" "sqlc" {
       paths = unique_key.value.paths
     }
   }
-}
-
-resource "azurerm_user_assigned_identity" "identity" {
-  for_each = contains(["UserAssigned", "SystemAssigned, UserAssigned"], try(var.account.identity.type, "")) ? { "identity" = var.account.identity } : {}
-
-  resource_group_name = coalesce(
-    lookup(
-      var.account, "resource_group", null
-    ), var.resource_group
-  )
-
-  location = coalesce(
-    lookup(var.account, "location", null
-    ), var.location
-  )
-
-  name = try(
-    each.value.name, "uai-${var.account.name}"
-  )
-
-  tags = try(
-    var.account.tags, var.tags, null
-  )
 }
