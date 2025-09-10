@@ -40,14 +40,14 @@ module "network" {
 
 module "cosmosdb" {
   source  = "cloudnationhq/cosmosdb/azure"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   account = {
-    name           = module.naming.cosmosdb_account.name_unique
-    location       = module.rg.groups.demo.location
-    resource_group = module.rg.groups.demo.name
-    kind           = "MongoDB"
-    capabilities   = ["EnableAggregationPipeline", "EnableMongo"]
+    name                = module.naming.cosmosdb_account.name_unique
+    location            = module.rg.groups.demo.location
+    resource_group_name = module.rg.groups.demo.name
+    kind                = "MongoDB"
+    capabilities        = ["EnableAggregationPipeline", "EnableMongo"]
 
     geo_location = {
       francecentral = {
