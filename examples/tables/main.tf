@@ -19,14 +19,14 @@ module "rg" {
 
 module "cosmosdb" {
   source  = "cloudnationhq/cosmosdb/azure"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   account = {
-    name           = module.naming.cosmosdb_account.name_unique
-    location       = module.rg.groups.demo.location
-    resource_group = module.rg.groups.demo.name
-    kind           = "GlobalDocumentDB"
-    capabilities   = ["EnableTable"]
+    name                = module.naming.cosmosdb_account.name_unique
+    location            = module.rg.groups.demo.location
+    resource_group_name = module.rg.groups.demo.name
+    kind                = "GlobalDocumentDB"
+    capabilities        = ["EnableTable"]
 
     geo_location = {
       francecentral = {
