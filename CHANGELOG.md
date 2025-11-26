@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v4.0.0...v4.1.0) (2025-11-26)
+
+
+### Features
+
+* increment all module versions to the latest ([#103](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/103)) ([aa98cc0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/aa98cc0d4fd6666aeefe051887313f94e995fb75))
+
 ## [4.0.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v3.6.0...v4.0.0) (2025-09-10)
 
 
