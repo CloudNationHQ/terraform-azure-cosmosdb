@@ -39,7 +39,7 @@ variable "account" {
       type         = string
       identity_ids = optional(list(string))
     }))
-    capabilities       = optional(list(string))
+    capabilities = optional(list(string))
     analytical_storage = optional(object({
       schema_type = string
     }))
@@ -135,9 +135,9 @@ variable "account" {
             conflict_resolution_procedure = optional(string)
           }))
           index_policy = optional(object({
-            indexing_mode   = optional(string)
-            included_paths  = optional(list(string))
-            excluded_paths  = optional(list(string))
+            indexing_mode  = optional(string)
+            included_paths = optional(list(string))
+            excluded_paths = optional(list(string))
             composite_index = optional(map(object({
               index = list(object({
                 path  = string
