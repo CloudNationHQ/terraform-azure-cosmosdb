@@ -1,7 +1,5 @@
 # cosmosdb account
 resource "azurerm_cosmosdb_account" "this" {
-  for_each = { "this" = {} }
-
   name                = var.account.name
   resource_group_name = coalesce(var.account.resource_group_name, var.resource_group_name)
   location            = coalesce(var.account.location, var.location)
@@ -153,7 +151,7 @@ resource "azurerm_private_endpoint" "this" {
   private_service_connection {
     name                           = coalesce(each.value.private_service_connection_name, "${each.key}-connection")
     is_manual_connection           = coalesce(each.value.is_manual_connection, false)
-    private_connection_resource_id = azurerm_cosmosdb_account.this["this"].id
+    private_connection_resource_id = azurerm_cosmosdb_account.this.id
     subresource_names              = each.value.subresource_name != null ? [each.value.subresource_name] : []
     request_message                = each.value.request_message
   }
@@ -185,8 +183,8 @@ resource "azurerm_cosmosdb_mongo_database" "this" {
 
   name = coalesce(each.value.name, "mongo-${each.key}")
 
-  account_name        = azurerm_cosmosdb_account.this["this"].name
-  resource_group_name = azurerm_cosmosdb_account.this["this"].resource_group_name
+  account_name        = azurerm_cosmosdb_account.this.name
+  resource_group_name = azurerm_cosmosdb_account.this.resource_group_name
   throughput          = each.value.throughput
 
   dynamic "autoscale_settings" {
@@ -227,8 +225,8 @@ resource "azurerm_cosmosdb_mongo_collection" "this" {
 
   name                   = each.value.name
   throughput             = each.value.autoscale_settings != null ? null : each.value.throughput
-  account_name           = azurerm_cosmosdb_account.this["this"].name
-  resource_group_name    = azurerm_cosmosdb_account.this["this"].resource_group_name
+  account_name           = azurerm_cosmosdb_account.this.name
+  resource_group_name    = azurerm_cosmosdb_account.this.resource_group_name
   database_name          = azurerm_cosmosdb_mongo_database.this[each.value.db_key].name
   default_ttl_seconds    = coalesce(each.value.default_ttl_seconds, -1)
   shard_key              = each.value.shard_key
@@ -258,8 +256,8 @@ resource "azurerm_cosmosdb_table" "this" {
 
   name = coalesce(each.value.name, "table-${each.key}")
 
-  account_name        = azurerm_cosmosdb_account.this["this"].name
-  resource_group_name = azurerm_cosmosdb_account.this["this"].resource_group_name
+  account_name        = azurerm_cosmosdb_account.this.name
+  resource_group_name = azurerm_cosmosdb_account.this.resource_group_name
   throughput          = each.value.throughput
 
   dynamic "autoscale_settings" {
@@ -277,8 +275,8 @@ resource "azurerm_cosmosdb_sql_database" "this" {
 
   name = coalesce(each.value.name, "sql-${each.key}")
 
-  account_name        = azurerm_cosmosdb_account.this["this"].name
-  resource_group_name = azurerm_cosmosdb_account.this["this"].resource_group_name
+  account_name        = azurerm_cosmosdb_account.this.name
+  resource_group_name = azurerm_cosmosdb_account.this.resource_group_name
   throughput          = each.value.throughput
 
   dynamic "autoscale_settings" {
@@ -314,8 +312,8 @@ resource "azurerm_cosmosdb_sql_container" "this" {
   ]...)
 
   name                   = each.value.name
-  resource_group_name    = azurerm_cosmosdb_account.this["this"].resource_group_name
-  account_name           = azurerm_cosmosdb_account.this["this"].name
+  resource_group_name    = azurerm_cosmosdb_account.this.resource_group_name
+  account_name           = azurerm_cosmosdb_account.this.name
   database_name          = azurerm_cosmosdb_sql_database.this[each.value.db_key].name
   partition_key_paths    = each.value.partition_key_paths
   partition_key_kind     = coalesce(each.value.partition_key_kind, "Hash")

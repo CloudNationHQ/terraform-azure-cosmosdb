@@ -1,6 +1,6 @@
 output "account" {
   description = "cosmosdb account"
-  value       = azurerm_cosmosdb_account.this["this"]
+  value       = azurerm_cosmosdb_account.this
 }
 
 output "mongo_databases" {

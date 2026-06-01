@@ -1,6 +1,6 @@
 moved {
   from = azurerm_cosmosdb_account.db
-  to   = azurerm_cosmosdb_account.this["this"]
+  to   = azurerm_cosmosdb_account.this
 }
 
 moved {
