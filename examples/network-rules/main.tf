@@ -45,12 +45,12 @@ module "cosmosdb" {
   version = "~> 4.0"
 
   account = {
-    name                = module.naming.cosmosdb_account.name_unique
-    location            = module.rg.groups.demo.location
-    resource_group_name = module.rg.groups.demo.name
-    kind                = "MongoDB"
-    capabilities        = ["EnableAggregationPipeline", "EnableMongo"]
-    network_filter      = true
+    name                              = module.naming.cosmosdb_account.name_unique
+    location                          = module.rg.groups.demo.location
+    resource_group_name               = module.rg.groups.demo.name
+    kind                              = "MongoDB"
+    capabilities                      = ["EnableAggregationPipeline", "EnableMongo"]
+    is_virtual_network_filter_enabled = true
 
     geo_location = {
       francecentral = {
@@ -59,7 +59,7 @@ module "cosmosdb" {
       }
     }
 
-    network_rules = {
+    virtual_network_rule = {
       rule1 = {
         id = module.network.subnets.sn1.id
       }

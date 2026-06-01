@@ -63,12 +63,12 @@ object({
     free_tier_enabled                     = optional(bool, false)
     network_acl_bypass_ids                = optional(list(string), [])
     mongo_server_version                  = optional(string, "4.2")
-    access_key_metadata_writes            = optional(bool, false)
+    access_key_metadata_writes_enabled    = optional(bool, false)
     multiple_write_locations_enabled      = optional(bool, false)
     local_authentication_disabled         = optional(bool, false)
     network_acl_bypass_for_azure_services = optional(bool, false)
-    network_filter                        = optional(bool, false)
-    public_network_access                 = optional(bool, true)
+    is_virtual_network_filter_enabled     = optional(bool, false)
+    public_network_access_enabled         = optional(bool, true)
     analytical_storage_enabled            = optional(bool, false)
     key_vault_key_id                      = optional(string)
     partition_merge_enabled               = optional(bool, false)
@@ -129,7 +129,7 @@ object({
       max_interval_in_seconds = optional(number, 300)
       max_staleness_prefix    = optional(number, 100000)
     }), {})
-    network_rules = optional(map(object({
+    virtual_network_rule = optional(map(object({
       id                                   = string
       ignore_missing_vnet_service_endpoint = optional(bool, false)
     })), {})
