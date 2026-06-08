@@ -3,27 +3,27 @@ resource "azurerm_cosmosdb_account" "this" {
   name                = var.account.name
   resource_group_name = coalesce(var.account.resource_group_name, var.resource_group_name)
   location            = coalesce(var.account.location, var.location)
-  offer_type          = coalesce(var.account.offer_type, "Standard")
+  offer_type          = var.account.offer_type
   kind                = var.account.kind
   tags                = coalesce(var.account.tags, var.tags)
 
-  automatic_failover_enabled            = coalesce(var.account.automatic_failover_enabled, false)
-  free_tier_enabled                     = coalesce(var.account.free_tier_enabled, false)
-  network_acl_bypass_ids                = coalesce(var.account.network_acl_bypass_ids, [])
-  mongo_server_version                  = var.account.kind == "MongoDB" ? coalesce(var.account.mongo_server_version, "4.2") : null
-  burst_capacity_enabled                = coalesce(var.account.burst_capacity_enabled, false)
-  access_key_metadata_writes_enabled    = coalesce(var.account.access_key_metadata_writes_enabled, false)
-  multiple_write_locations_enabled      = coalesce(var.account.multiple_write_locations_enabled, false)
-  local_authentication_disabled         = coalesce(var.account.local_authentication_disabled, false)
-  network_acl_bypass_for_azure_services = coalesce(var.account.network_acl_bypass_for_azure_services, false)
-  is_virtual_network_filter_enabled     = coalesce(var.account.is_virtual_network_filter_enabled, false)
+  automatic_failover_enabled            = var.account.automatic_failover_enabled
+  free_tier_enabled                     = var.account.free_tier_enabled
+  network_acl_bypass_ids                = var.account.network_acl_bypass_ids
+  mongo_server_version                  = var.account.kind == "MongoDB" ? var.account.mongo_server_version : null
+  burst_capacity_enabled                = var.account.burst_capacity_enabled
+  access_key_metadata_writes_enabled    = var.account.access_key_metadata_writes_enabled
+  multiple_write_locations_enabled      = var.account.multiple_write_locations_enabled
+  local_authentication_disabled         = var.account.local_authentication_disabled
+  network_acl_bypass_for_azure_services = var.account.network_acl_bypass_for_azure_services
+  is_virtual_network_filter_enabled     = var.account.is_virtual_network_filter_enabled
   public_network_access_enabled         = var.account.public_network_access_enabled
-  analytical_storage_enabled            = coalesce(var.account.analytical_storage_enabled, false)
+  analytical_storage_enabled            = var.account.analytical_storage_enabled
   key_vault_key_id                      = var.account.key_vault_key_id
-  partition_merge_enabled               = coalesce(var.account.partition_merge_enabled, false)
+  partition_merge_enabled               = var.account.partition_merge_enabled
   create_mode                           = var.account.create_mode
-  minimal_tls_version                   = try(var.account.minimal_tls_version, "Tls12")
-  default_identity_type                 = coalesce(var.account.default_identity_type, "FirstPartyIdentity")
+  minimal_tls_version                   = var.account.minimal_tls_version
+  default_identity_type                 = var.account.default_identity_type
   ip_range_filter                       = var.account.ip_range_filter
 
   dynamic "cors_rule" {
@@ -87,7 +87,7 @@ resource "azurerm_cosmosdb_account" "this" {
     for_each = var.account.restore != null ? { "this" = var.account.restore } : {}
 
     content {
-      tables_to_restore          = coalesce(restore.value.tables_to_restore, [])
+      tables_to_restore          = restore.value.tables_to_restore
       restore_timestamp_in_utc   = restore.value.restore_timestamp_in_utc
       source_cosmosdb_account_id = restore.value.source_cosmosdb_account_id
 
@@ -96,7 +96,7 @@ resource "azurerm_cosmosdb_account" "this" {
 
         content {
           name             = database.value.name
-          collection_names = coalesce(database.value.collection_names, [])
+          collection_names = database.value.collection_names
         }
       }
 
@@ -117,14 +117,18 @@ resource "azurerm_cosmosdb_account" "this" {
     content {
       location          = geo_location.value.location
       failover_priority = geo_location.value.failover_priority
-      zone_redundant    = coalesce(geo_location.value.zone_redundant, false)
+      zone_redundant    = geo_location.value.zone_redundant
     }
   }
 
-  consistency_policy {
-    consistency_level       = try(var.account.consistency_policy.consistency_level, "BoundedStaleness")
-    max_interval_in_seconds = try(var.account.consistency_policy.max_interval_in_seconds, 300)
-    max_staleness_prefix    = try(var.account.consistency_policy.max_staleness_prefix, 100000)
+  dynamic "consistency_policy" {
+    for_each = var.account.consistency_policy != null ? { "this" = var.account.consistency_policy } : {}
+
+    content {
+      consistency_level       = consistency_policy.value.consistency_level
+      max_interval_in_seconds = consistency_policy.value.max_interval_in_seconds
+      max_staleness_prefix    = consistency_policy.value.max_staleness_prefix
+    }
   }
 
   dynamic "virtual_network_rule" {
@@ -132,7 +136,7 @@ resource "azurerm_cosmosdb_account" "this" {
 
     content {
       id                                   = virtual_network_rule.value.id
-      ignore_missing_vnet_service_endpoint = coalesce(virtual_network_rule.value.ignore_missing_vnet_service_endpoint, false)
+      ignore_missing_vnet_service_endpoint = virtual_network_rule.value.ignore_missing_vnet_service_endpoint
     }
   }
 }
@@ -150,7 +154,7 @@ resource "azurerm_private_endpoint" "this" {
 
   private_service_connection {
     name                           = coalesce(each.value.private_service_connection_name, "${each.key}-connection")
-    is_manual_connection           = coalesce(each.value.is_manual_connection, false)
+    is_manual_connection           = each.value.is_manual_connection
     private_connection_resource_id = azurerm_cosmosdb_account.this.id
     subresource_names              = each.value.subresource_name != null ? [each.value.subresource_name] : []
     request_message                = each.value.request_message
@@ -228,7 +232,7 @@ resource "azurerm_cosmosdb_mongo_collection" "this" {
   account_name           = azurerm_cosmosdb_account.this.name
   resource_group_name    = azurerm_cosmosdb_account.this.resource_group_name
   database_name          = azurerm_cosmosdb_mongo_database.this[each.value.db_key].name
-  default_ttl_seconds    = coalesce(each.value.default_ttl_seconds, -1)
+  default_ttl_seconds    = each.value.default_ttl_seconds
   shard_key              = each.value.shard_key
   analytical_storage_ttl = each.value.analytical_storage_ttl
 
@@ -245,7 +249,7 @@ resource "azurerm_cosmosdb_mongo_collection" "this" {
 
     content {
       keys   = index.value.keys
-      unique = coalesce(lookup(index.value, "unique", null), false)
+      unique = index.value.unique
     }
   }
 }
@@ -316,10 +320,10 @@ resource "azurerm_cosmosdb_sql_container" "this" {
   account_name           = azurerm_cosmosdb_account.this.name
   database_name          = azurerm_cosmosdb_sql_database.this[each.value.db_key].name
   partition_key_paths    = each.value.partition_key_paths
-  partition_key_kind     = coalesce(each.value.partition_key_kind, "Hash")
-  partition_key_version  = coalesce(each.value.partition_key_version, 1)
+  partition_key_kind     = each.value.partition_key_kind
+  partition_key_version  = each.value.partition_key_version
   throughput             = each.value.autoscale_settings != null ? null : each.value.throughput
-  default_ttl            = coalesce(each.value.default_ttl, -1)
+  default_ttl            = each.value.default_ttl
   analytical_storage_ttl = each.value.analytical_storage_ttl
 
   dynamic "autoscale_settings" {
@@ -344,7 +348,7 @@ resource "azurerm_cosmosdb_sql_container" "this" {
     for_each = each.value.index_policy != null ? { "this" = each.value.index_policy } : {}
 
     content {
-      indexing_mode = coalesce(indexing_policy.value.indexing_mode, "consistent")
+      indexing_mode = indexing_policy.value.indexing_mode
 
       dynamic "included_path" {
         for_each = coalesce(indexing_policy.value.included_paths, [])
