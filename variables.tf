@@ -68,11 +68,11 @@ variable "account" {
       failover_priority = number
       zone_redundant    = optional(bool)
     }))
-    consistency_policy = optional(object({
-      consistency_level       = optional(string)
+    consistency_policy = object({
+      consistency_level       = string
       max_interval_in_seconds = optional(number)
       max_staleness_prefix    = optional(number)
-    }))
+    })
     virtual_network_rule = optional(map(object({
       id                                   = string
       ignore_missing_vnet_service_endpoint = optional(bool)

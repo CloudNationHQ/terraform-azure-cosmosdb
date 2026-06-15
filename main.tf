@@ -121,14 +121,10 @@ resource "azurerm_cosmosdb_account" "this" {
     }
   }
 
-  dynamic "consistency_policy" {
-    for_each = var.account.consistency_policy != null ? { "this" = var.account.consistency_policy } : {}
-
-    content {
-      consistency_level       = consistency_policy.value.consistency_level
-      max_interval_in_seconds = consistency_policy.value.max_interval_in_seconds
-      max_staleness_prefix    = consistency_policy.value.max_staleness_prefix
-    }
+  consistency_policy {
+    consistency_level       = var.account.consistency_policy.consistency_level
+    max_interval_in_seconds = var.account.consistency_policy.max_interval_in_seconds
+    max_staleness_prefix    = var.account.consistency_policy.max_staleness_prefix
   }
 
   dynamic "virtual_network_rule" {

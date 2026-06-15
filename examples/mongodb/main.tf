@@ -25,6 +25,7 @@ module "cosmosdb" {
     name                = module.naming.cosmosdb_account.name_unique
     location            = module.rg.groups.demo.location
     resource_group_name = module.rg.groups.demo.name
+    offer_type          = "Standard"
     kind                = "MongoDB"
     capabilities        = ["EnableAggregationPipeline", "EnableMongo"]
     geo_location = {
@@ -33,6 +34,11 @@ module "cosmosdb" {
         failover_priority = 0
       }
     }
+
+    consistency_policy = {
+      consistency_level = "Session"
+    }
+
     databases = {
       mongo = {
         db1 = {
