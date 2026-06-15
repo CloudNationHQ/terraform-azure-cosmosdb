@@ -48,7 +48,6 @@ module "cosmosdb" {
     name                              = module.naming.cosmosdb_account.name_unique
     location                          = module.rg.groups.demo.location
     resource_group_name               = module.rg.groups.demo.name
-    offer_type                        = "Standard"
     kind                              = "MongoDB"
     capabilities                      = ["EnableAggregationPipeline", "EnableMongo"]
     is_virtual_network_filter_enabled = true

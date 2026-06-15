@@ -4,7 +4,7 @@ variable "account" {
     name                                  = string
     resource_group_name                   = optional(string)
     location                              = optional(string)
-    offer_type                            = optional(string)
+    offer_type                            = optional(string, "Standard")
     kind                                  = string
     automatic_failover_enabled            = optional(bool)
     free_tier_enabled                     = optional(bool)
