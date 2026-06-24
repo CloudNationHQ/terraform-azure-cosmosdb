@@ -1,5 +1,21 @@
 # Changelog
 
+## [5.0.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v4.1.0...v5.0.0) (2026-06-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* cosmosdb alignment ([#114](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/114))
+
+### Features
+
+* cosmosdb alignment ([#114](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/114)) ([76066f1](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/76066f1288a916dcf059d82eb10b0dc3c3d9edf4))
+* **deps:** bump github.com/cloudnationhq/az-cn-go-validor in /tests ([#105](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/105)) ([609e482](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/609e482848fd9ead2cd48608aaeb5d785b0f5382))
+* **deps:** bump github.com/cloudnationhq/az-cn-go-validor in /tests ([#108](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/108)) ([5b497cb](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/5b497cbb301538231b555da7713a973a1581e704))
+* **deps:** bump github.com/cloudnationhq/az-cn-go-validor in /tests ([#109](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/109)) ([6ab16bb](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/6ab16bb48a45a78f92ccd7f5d7a4092f7d797805))
+* **deps:** bump github.com/cloudnationhq/az-cn-go-validor in /tests ([#110](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/110)) ([a46f3a3](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/a46f3a3e63f07e383b23dc2f44622cae69e3572a))
+* **deps:** bump github.com/cloudnationhq/az-cn-go-validor in /tests ([#111](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/111)) ([81b1bc3](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/81b1bc3d30e941fdc5fc80e082f439885d714c4a))
+
 ## [4.1.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v4.0.0...v4.1.0) (2025-11-26)
 
 
