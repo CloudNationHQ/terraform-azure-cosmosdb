@@ -19,7 +19,7 @@ module "rg" {
 
 module "cosmosdb" {
   source  = "cloudnationhq/cosmosdb/azure"
-  version = "~> 4.0"
+  version = "~> 5.0"
 
   account = {
     name                = module.naming.cosmosdb_account.name_unique
@@ -33,6 +33,10 @@ module "cosmosdb" {
         location          = "francecentral"
         failover_priority = 0
       }
+    }
+
+    consistency_policy = {
+      consistency_level = "Session"
     }
   }
 }

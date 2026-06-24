@@ -35,6 +35,10 @@ module "cosmosdb" {
       }
     }
 
+    consistency_policy = {
+      consistency_level = "Session"
+    }
+
     tables = {
       products = {
         throughput = 400

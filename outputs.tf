@@ -1,23 +1,29 @@
 output "account" {
-  value = azurerm_cosmosdb_account.db
+  description = "cosmosdb account"
+  value       = azurerm_cosmosdb_account.this
 }
 
-output "mongodb" {
-  value = azurerm_cosmosdb_mongo_database.mongodb
+output "mongo_databases" {
+  description = "mongo databases"
+  value       = azurerm_cosmosdb_mongo_database.this
 }
 
-output "mongodb_collection" {
-  value = azurerm_cosmosdb_mongo_collection.mongodb_collection
+output "mongo_collections" {
+  description = "mongo collections"
+  value       = azurerm_cosmosdb_mongo_collection.this
 }
 
 output "tables" {
-  value = azurerm_cosmosdb_table.tables
+  description = "cosmosdb tables"
+  value       = azurerm_cosmosdb_table.this
 }
 
-output "sqldb" {
-  value = azurerm_cosmosdb_sql_database.sqldb
+output "sql_databases" {
+  description = "sql databases"
+  value       = azurerm_cosmosdb_sql_database.this
 }
 
-output "sql_container" {
-  value = azurerm_cosmosdb_sql_container.sqlc
+output "sql_containers" {
+  description = "sql containers"
+  value       = azurerm_cosmosdb_sql_container.this
 }

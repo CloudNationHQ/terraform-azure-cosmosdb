@@ -2,7 +2,7 @@ module "naming" {
   source  = "cloudnationhq/naming/azure"
   version = "~> 0.25"
 
-  suffix = ["demo", "prd"]
+  suffix = ["demo", "dev"]
 }
 
 module "rg" {
@@ -26,10 +26,11 @@ module "cosmosdb" {
     location            = module.rg.groups.demo.location
     resource_group_name = module.rg.groups.demo.name
     kind                = "GlobalDocumentDB"
+    capabilities        = ["EnableServerless"]
 
     geo_location = {
-      francecentral = {
-        location          = "francecentral"
+      germanywestcentral = {
+        location          = "germanywestcentral"
         failover_priority = 0
       }
     }
@@ -41,22 +42,12 @@ module "cosmosdb" {
     databases = {
       sql = {
         db1 = {
-          throughput = 400
           containers = {
             sqlc1 = {
-              throughput          = 400
-              partition_key_paths = ["/definition/idlong"]
+              partition_key_paths = ["/id"]
               index_policy = {
                 indexing_mode  = "consistent"
                 included_paths = ["/*"]
-              }
-              unique_key = {
-                key1 = {
-                  paths = ["/definition/idlong", "/definition/idshort"]
-                }
-                key2 = {
-                  paths = ["/definition/type", "/definition/category"]
-                }
               }
             }
           }

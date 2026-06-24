@@ -35,12 +35,13 @@ The following providers are used by this module:
 
 The following resources are used by this module:
 
-- [azurerm_cosmosdb_account.db](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_account) (resource)
-- [azurerm_cosmosdb_mongo_collection.mongodb_collection](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_mongo_collection) (resource)
-- [azurerm_cosmosdb_mongo_database.mongodb](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_mongo_database) (resource)
-- [azurerm_cosmosdb_sql_container.sqlc](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_sql_container) (resource)
-- [azurerm_cosmosdb_sql_database.sqldb](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_sql_database) (resource)
-- [azurerm_cosmosdb_table.tables](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_table) (resource)
+- [azurerm_cosmosdb_account.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_account) (resource)
+- [azurerm_cosmosdb_mongo_collection.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_mongo_collection) (resource)
+- [azurerm_cosmosdb_mongo_database.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_mongo_database) (resource)
+- [azurerm_cosmosdb_sql_container.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_sql_container) (resource)
+- [azurerm_cosmosdb_sql_database.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_sql_database) (resource)
+- [azurerm_cosmosdb_table.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_table) (resource)
+- [azurerm_private_endpoint.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) (resource)
 
 ## Required Inputs
 
@@ -48,7 +49,7 @@ The following input variables are required:
 
 ### <a name="input_account"></a> [account](#input\_account)
 
-Description: Contains all cosmosdb configuration
+Description: contains all cosmosdb configuration
 
 Type:
 
@@ -57,28 +58,27 @@ object({
     name                                  = string
     resource_group_name                   = optional(string)
     location                              = optional(string)
-    offer_type                            = optional(string, "Standard")
+    offer_type                            = optional(string)
     kind                                  = string
-    automatic_failover_enabled            = optional(bool, false)
-    free_tier_enabled                     = optional(bool, false)
-    network_acl_bypass_ids                = optional(list(string), [])
-    mongo_server_version                  = optional(string, "4.2")
-    access_key_metadata_writes            = optional(bool, false)
-    multiple_write_locations_enabled      = optional(bool, false)
-    local_authentication_disabled         = optional(bool, false)
-    network_acl_bypass_for_azure_services = optional(bool, false)
-    network_filter                        = optional(bool, false)
-    public_network_access                 = optional(bool, true)
-    analytical_storage_enabled            = optional(bool, false)
+    automatic_failover_enabled            = optional(bool)
+    free_tier_enabled                     = optional(bool)
+    network_acl_bypass_ids                = optional(list(string))
+    mongo_server_version                  = optional(string)
+    access_key_metadata_writes_enabled    = optional(bool)
+    multiple_write_locations_enabled      = optional(bool)
+    local_authentication_disabled         = optional(bool)
+    network_acl_bypass_for_azure_services = optional(bool)
+    is_virtual_network_filter_enabled     = optional(bool)
+    public_network_access_enabled         = optional(bool)
+    analytical_storage_enabled            = optional(bool)
     key_vault_key_id                      = optional(string)
-    partition_merge_enabled               = optional(bool, false)
+    partition_merge_enabled               = optional(bool)
     create_mode                           = optional(string)
-    minimal_tls_version                   = optional(string, "Tls12")
-    default_identity_type                 = optional(string, "FirstPartyIdentity")
+    minimal_tls_version                   = optional(string)
+    default_identity_type                 = optional(string)
     ip_range_filter                       = optional(set(string))
     tags                                  = optional(map(string))
-    managed_hsm_key_id                    = optional(string)
-    burst_capacity_enabled                = optional(bool, false)
+    burst_capacity_enabled                = optional(bool)
     cors_rule = optional(object({
       allowed_headers    = list(string)
       allowed_methods    = list(string)
@@ -91,11 +91,9 @@ object({
     }))
     identity = optional(object({
       type         = string
-      name         = optional(string)
-      identity_ids = optional(list(string), [])
-      tags         = optional(map(string))
+      identity_ids = optional(list(string))
     }))
-    capabilities = optional(list(string), [])
+    capabilities = optional(list(string))
     analytical_storage = optional(object({
       schema_type = string
     }))
@@ -107,32 +105,49 @@ object({
       storage_redundancy  = optional(string)
     }))
     restore = optional(object({
-      tables_to_restore          = optional(list(string), [])
+      tables_to_restore          = optional(list(string))
       restore_timestamp_in_utc   = string
       source_cosmosdb_account_id = string
       database = optional(map(object({
         name             = string
-        collection_names = optional(list(string), [])
-      })), {})
+        collection_names = optional(list(string))
+      })))
       gremlin_database = optional(map(object({
         name        = string
         graph_names = list(string)
-      })), {})
+      })))
     }))
     geo_location = map(object({
       location          = string
       failover_priority = number
-      zone_redundant    = optional(bool, false)
+      zone_redundant    = optional(bool)
     }))
     consistency_policy = optional(object({
-      consistency_level       = optional(string, "BoundedStaleness")
-      max_interval_in_seconds = optional(number, 300)
-      max_staleness_prefix    = optional(number, 100000)
-    }), {})
-    network_rules = optional(map(object({
+      consistency_level       = optional(string)
+      max_interval_in_seconds = optional(number)
+      max_staleness_prefix    = optional(number)
+    }))
+    virtual_network_rule = optional(map(object({
       id                                   = string
-      ignore_missing_vnet_service_endpoint = optional(bool, false)
-    })), {})
+      ignore_missing_vnet_service_endpoint = optional(bool)
+    })))
+    private_endpoints = optional(map(object({
+      name                            = optional(string)
+      subnet_resource_id              = string
+      subresource_name                = optional(string)
+      private_dns_zone_resource_ids   = optional(list(string))
+      custom_network_interface_name   = optional(string)
+      tags                            = optional(map(string))
+      private_service_connection_name = optional(string)
+      is_manual_connection            = optional(bool)
+      request_message                 = optional(string)
+      ip_configurations = optional(map(object({
+        name               = optional(string)
+        private_ip_address = optional(string)
+        member_name        = optional(string)
+        subresource_name   = optional(string)
+      })))
+    })))
     databases = optional(object({
       mongo = optional(map(object({
         name       = optional(string)
@@ -148,13 +163,13 @@ object({
           }))
           shard_key              = optional(string)
           analytical_storage_ttl = optional(number)
-          default_ttl_seconds    = optional(number, -1)
+          default_ttl_seconds    = optional(number)
           index = optional(map(object({
             keys   = list(string)
-            unique = optional(bool, false)
-          })), {})
-        })), {})
-      })), {})
+            unique = optional(bool)
+          })))
+        })))
+      })))
       sql = optional(map(object({
         name       = optional(string)
         throughput = optional(number)
@@ -174,36 +189,36 @@ object({
             conflict_resolution_procedure = optional(string)
           }))
           index_policy = optional(object({
-            indexing_mode  = optional(string, "consistent")
-            included_paths = optional(list(string), [])
-            excluded_paths = optional(list(string), [])
+            indexing_mode  = optional(string)
+            included_paths = optional(list(string))
+            excluded_paths = optional(list(string))
             composite_index = optional(map(object({
               index = list(object({
                 path  = string
                 order = string
               }))
-            })), {})
+            })))
             spatial_index = optional(map(object({
               path = string
-            })), {})
-          }), {})
+            })))
+          }))
           unique_key = optional(map(object({
             paths = list(string)
-          })), {})
+          })))
           partition_key_paths   = list(string)
-          partition_key_kind    = optional(string, "Hash")
-          partition_key_version = optional(number, 1)
-          default_ttl           = optional(number, -1)
-        })), {})
-      })), {})
-    }), {})
+          partition_key_kind    = optional(string)
+          partition_key_version = optional(number)
+          default_ttl           = optional(number)
+        })))
+      })))
+    }))
     tables = optional(map(object({
       name       = optional(string)
       throughput = optional(number)
       autoscale_settings = optional(object({
         max_throughput = number
       }))
-    })), {})
+    })))
   })
 ```
 
@@ -241,27 +256,27 @@ The following outputs are exported:
 
 ### <a name="output_account"></a> [account](#output\_account)
 
-Description: n/a
+Description: cosmosdb account
 
-### <a name="output_mongodb"></a> [mongodb](#output\_mongodb)
+### <a name="output_mongo_collections"></a> [mongo\_collections](#output\_mongo\_collections)
 
-Description: n/a
+Description: mongo collections
 
-### <a name="output_mongodb_collection"></a> [mongodb\_collection](#output\_mongodb\_collection)
+### <a name="output_mongo_databases"></a> [mongo\_databases](#output\_mongo\_databases)
 
-Description: n/a
+Description: mongo databases
 
-### <a name="output_sql_container"></a> [sql\_container](#output\_sql\_container)
+### <a name="output_sql_containers"></a> [sql\_containers](#output\_sql\_containers)
 
-Description: n/a
+Description: sql containers
 
-### <a name="output_sqldb"></a> [sqldb](#output\_sqldb)
+### <a name="output_sql_databases"></a> [sql\_databases](#output\_sql\_databases)
 
-Description: n/a
+Description: sql databases
 
 ### <a name="output_tables"></a> [tables](#output\_tables)
 
-Description: n/a
+Description: cosmosdb tables
 <!-- END_TF_DOCS -->
 
 ## Goals
