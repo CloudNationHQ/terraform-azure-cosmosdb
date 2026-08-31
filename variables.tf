@@ -12,7 +12,7 @@ variable "account" {
     mongo_server_version                  = optional(string)
     access_key_metadata_writes_enabled    = optional(bool)
     multiple_write_locations_enabled      = optional(bool)
-    local_authentication_disabled         = optional(bool)
+    local_authentication_enabled          = optional(bool)
     network_acl_bypass_for_azure_services = optional(bool)
     is_virtual_network_filter_enabled     = optional(bool)
     public_network_access_enabled         = optional(bool)

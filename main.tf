@@ -14,7 +14,7 @@ resource "azurerm_cosmosdb_account" "this" {
   burst_capacity_enabled                = var.account.burst_capacity_enabled
   access_key_metadata_writes_enabled    = var.account.access_key_metadata_writes_enabled
   multiple_write_locations_enabled      = var.account.multiple_write_locations_enabled
-  local_authentication_disabled         = var.account.local_authentication_disabled
+  local_authentication_enabled          = var.account.local_authentication_enabled
   network_acl_bypass_for_azure_services = var.account.network_acl_bypass_for_azure_services
   is_virtual_network_filter_enabled     = var.account.is_virtual_network_filter_enabled
   public_network_access_enabled         = var.account.public_network_access_enabled

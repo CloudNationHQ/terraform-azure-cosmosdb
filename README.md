@@ -23,13 +23,13 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.0)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 5.0)
 
 ## Providers
 
 The following providers are used by this module:
 
-- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 4.0)
+- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 5.0)
 
 ## Resources
 
@@ -58,7 +58,7 @@ object({
     name                                  = string
     resource_group_name                   = optional(string)
     location                              = optional(string)
-    offer_type                            = optional(string)
+    offer_type                            = optional(string, "Standard")
     kind                                  = string
     automatic_failover_enabled            = optional(bool)
     free_tier_enabled                     = optional(bool)
@@ -66,7 +66,7 @@ object({
     mongo_server_version                  = optional(string)
     access_key_metadata_writes_enabled    = optional(bool)
     multiple_write_locations_enabled      = optional(bool)
-    local_authentication_disabled         = optional(bool)
+    local_authentication_enabled          = optional(bool)
     network_acl_bypass_for_azure_services = optional(bool)
     is_virtual_network_filter_enabled     = optional(bool)
     public_network_access_enabled         = optional(bool)
@@ -122,11 +122,11 @@ object({
       failover_priority = number
       zone_redundant    = optional(bool)
     }))
-    consistency_policy = optional(object({
-      consistency_level       = optional(string)
+    consistency_policy = object({
+      consistency_level       = string
       max_interval_in_seconds = optional(number)
       max_staleness_prefix    = optional(number)
-    }))
+    })
     virtual_network_rule = optional(map(object({
       id                                   = string
       ignore_missing_vnet_service_endpoint = optional(bool)
