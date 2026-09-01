@@ -1,12 +1,20 @@
 # cosmosdb account
 resource "azurerm_cosmosdb_account" "this" {
-  name                = var.account.name
-  resource_group_name = coalesce(var.account.resource_group_name, var.resource_group_name)
-  location            = coalesce(var.account.location, var.location)
-  offer_type          = var.account.offer_type
-  kind                = var.account.kind
-  tags                = coalesce(var.account.tags, var.tags)
+  resource_group_name = coalesce(
+    var.account.resource_group_name, var.resource_group_name
+  )
 
+  location = coalesce(
+    var.account.location, var.location
+  )
+
+  tags = coalesce(
+    var.account.tags, var.tags
+  )
+
+  name                                  = var.account.name
+  offer_type                            = var.account.offer_type
+  kind                                  = var.account.kind
   automatic_failover_enabled            = var.account.automatic_failover_enabled
   free_tier_enabled                     = var.account.free_tier_enabled
   network_acl_bypass_ids                = var.account.network_acl_bypass_ids
@@ -14,7 +22,7 @@ resource "azurerm_cosmosdb_account" "this" {
   burst_capacity_enabled                = var.account.burst_capacity_enabled
   access_key_metadata_writes_enabled    = var.account.access_key_metadata_writes_enabled
   multiple_write_locations_enabled      = var.account.multiple_write_locations_enabled
-  local_authentication_disabled         = var.account.local_authentication_disabled
+  local_authentication_enabled          = var.account.local_authentication_enabled
   network_acl_bypass_for_azure_services = var.account.network_acl_bypass_for_azure_services
   is_virtual_network_filter_enabled     = var.account.is_virtual_network_filter_enabled
   public_network_access_enabled         = var.account.public_network_access_enabled
@@ -56,7 +64,7 @@ resource "azurerm_cosmosdb_account" "this" {
   }
 
   dynamic "capabilities" {
-    for_each = coalesce(var.account.capabilities, [])
+    for_each = var.account.capabilities
 
     content {
       name = capabilities.value
@@ -92,7 +100,7 @@ resource "azurerm_cosmosdb_account" "this" {
       source_cosmosdb_account_id = restore.value.source_cosmosdb_account_id
 
       dynamic "database" {
-        for_each = coalesce(restore.value.database, {})
+        for_each = restore.value.database
 
         content {
           name             = database.value.name
@@ -101,7 +109,7 @@ resource "azurerm_cosmosdb_account" "this" {
       }
 
       dynamic "gremlin_database" {
-        for_each = coalesce(restore.value.gremlin_database, {})
+        for_each = restore.value.gremlin_database
 
         content {
           name        = gremlin_database.value.name
@@ -128,7 +136,7 @@ resource "azurerm_cosmosdb_account" "this" {
   }
 
   dynamic "virtual_network_rule" {
-    for_each = coalesce(var.account.virtual_network_rule, {})
+    for_each = var.account.virtual_network_rule
 
     content {
       id                                   = virtual_network_rule.value.id
@@ -137,51 +145,13 @@ resource "azurerm_cosmosdb_account" "this" {
   }
 }
 
-# private endpoints
-resource "azurerm_private_endpoint" "this" {
-  for_each = var.account.private_endpoints != null ? var.account.private_endpoints : {}
-
-  name                          = coalesce(each.value.name, each.key)
-  resource_group_name           = coalesce(var.account.resource_group_name, var.resource_group_name)
-  location                      = coalesce(var.account.location, var.location)
-  subnet_id                     = each.value.subnet_resource_id
-  custom_network_interface_name = each.value.custom_network_interface_name
-  tags                          = coalesce(each.value.tags, var.tags)
-
-  private_service_connection {
-    name                           = coalesce(each.value.private_service_connection_name, "${each.key}-connection")
-    is_manual_connection           = each.value.is_manual_connection
-    private_connection_resource_id = azurerm_cosmosdb_account.this.id
-    subresource_names              = each.value.subresource_name != null ? [each.value.subresource_name] : []
-    request_message                = each.value.request_message
-  }
-
-  dynamic "private_dns_zone_group" {
-    for_each = each.value.private_dns_zone_resource_ids != null ? { "this" = each.value.private_dns_zone_resource_ids } : {}
-
-    content {
-      name                 = "default"
-      private_dns_zone_ids = private_dns_zone_group.value
-    }
-  }
-
-  dynamic "ip_configuration" {
-    for_each = each.value.ip_configurations != null ? each.value.ip_configurations : {}
-
-    content {
-      name               = ip_configuration.value.name
-      private_ip_address = ip_configuration.value.private_ip_address
-      member_name        = ip_configuration.value.member_name
-      subresource_name   = ip_configuration.value.subresource_name
-    }
-  }
-}
-
 # mongo databases
 resource "azurerm_cosmosdb_mongo_database" "this" {
-  for_each = coalesce(try(var.account.databases.mongo, null), {})
+  for_each = var.account.databases.mongo
 
-  name = coalesce(each.value.name, "mongo-${each.key}")
+  name = coalesce(
+    each.value.name, "mongo-${each.key}"
+  )
 
   account_name        = azurerm_cosmosdb_account.this.name
   resource_group_name = azurerm_cosmosdb_account.this.resource_group_name
@@ -199,8 +169,8 @@ resource "azurerm_cosmosdb_mongo_database" "this" {
 # mongo collections
 resource "azurerm_cosmosdb_mongo_collection" "this" {
   for_each = merge([
-    for db_key, db in coalesce(try(var.account.databases.mongo, null), {}) : {
-      for collection_key, collection in lookup(db, "collections", {}) :
+    for db_key, db in var.account.databases.mongo : {
+      for collection_key, collection in db.collections :
       "${db_key}.${collection_key}" => {
         db_key                 = db_key
         collection_key         = collection_key
@@ -252,9 +222,11 @@ resource "azurerm_cosmosdb_mongo_collection" "this" {
 
 # tables
 resource "azurerm_cosmosdb_table" "this" {
-  for_each = var.account.tables != null ? var.account.tables : {}
+  for_each = var.account.tables
 
-  name = coalesce(each.value.name, "table-${each.key}")
+  name = coalesce(
+    each.value.name, "table-${each.key}"
+  )
 
   account_name        = azurerm_cosmosdb_account.this.name
   resource_group_name = azurerm_cosmosdb_account.this.resource_group_name
@@ -271,9 +243,11 @@ resource "azurerm_cosmosdb_table" "this" {
 
 # sql databases
 resource "azurerm_cosmosdb_sql_database" "this" {
-  for_each = coalesce(try(var.account.databases.sql, null), {})
+  for_each = var.account.databases.sql
 
-  name = coalesce(each.value.name, "sql-${each.key}")
+  name = coalesce(
+    each.value.name, "sql-${each.key}"
+  )
 
   account_name        = azurerm_cosmosdb_account.this.name
   resource_group_name = azurerm_cosmosdb_account.this.resource_group_name
@@ -291,8 +265,8 @@ resource "azurerm_cosmosdb_sql_database" "this" {
 # sql containers
 resource "azurerm_cosmosdb_sql_container" "this" {
   for_each = merge([
-    for db_key, db in coalesce(try(var.account.databases.sql, null), {}) : {
-      for container_key, container in lookup(db, "containers", {}) :
+    for db_key, db in var.account.databases.sql : {
+      for container_key, container in db.containers :
       "${db_key}.${container_key}" => {
         db_key                     = db_key
         container_key              = container_key
@@ -347,7 +321,7 @@ resource "azurerm_cosmosdb_sql_container" "this" {
       indexing_mode = indexing_policy.value.indexing_mode
 
       dynamic "included_path" {
-        for_each = coalesce(indexing_policy.value.included_paths, [])
+        for_each = indexing_policy.value.included_paths
 
         content {
           path = included_path.value
@@ -355,7 +329,7 @@ resource "azurerm_cosmosdb_sql_container" "this" {
       }
 
       dynamic "excluded_path" {
-        for_each = coalesce(indexing_policy.value.excluded_paths, [])
+        for_each = indexing_policy.value.excluded_paths
 
         content {
           path = excluded_path.value
@@ -363,7 +337,7 @@ resource "azurerm_cosmosdb_sql_container" "this" {
       }
 
       dynamic "composite_index" {
-        for_each = coalesce(indexing_policy.value.composite_index, {})
+        for_each = indexing_policy.value.composite_index
 
         content {
           dynamic "index" {
@@ -378,7 +352,7 @@ resource "azurerm_cosmosdb_sql_container" "this" {
       }
 
       dynamic "spatial_index" {
-        for_each = coalesce(indexing_policy.value.spatial_index, {})
+        for_each = indexing_policy.value.spatial_index
 
         content {
           path = spatial_index.value.path
@@ -388,7 +362,7 @@ resource "azurerm_cosmosdb_sql_container" "this" {
   }
 
   dynamic "unique_key" {
-    for_each = coalesce(each.value.unique_key, {})
+    for_each = each.value.unique_key
 
     content {
       paths = unique_key.value.paths

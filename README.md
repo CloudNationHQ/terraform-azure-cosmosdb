@@ -23,13 +23,13 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.0)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
+- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 5.0)
 
 ## Providers
 
 The following providers are used by this module:
 
-- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 4.0)
+- <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) (~> 5.0)
 
 ## Resources
 
@@ -41,7 +41,6 @@ The following resources are used by this module:
 - [azurerm_cosmosdb_sql_container.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_sql_container) (resource)
 - [azurerm_cosmosdb_sql_database.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_sql_database) (resource)
 - [azurerm_cosmosdb_table.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/cosmosdb_table) (resource)
-- [azurerm_private_endpoint.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) (resource)
 
 ## Required Inputs
 
@@ -58,7 +57,7 @@ object({
     name                                  = string
     resource_group_name                   = optional(string)
     location                              = optional(string)
-    offer_type                            = optional(string)
+    offer_type                            = optional(string, "Standard")
     kind                                  = string
     automatic_failover_enabled            = optional(bool)
     free_tier_enabled                     = optional(bool)
@@ -66,7 +65,7 @@ object({
     mongo_server_version                  = optional(string)
     access_key_metadata_writes_enabled    = optional(bool)
     multiple_write_locations_enabled      = optional(bool)
-    local_authentication_disabled         = optional(bool)
+    local_authentication_enabled          = optional(bool)
     network_acl_bypass_for_azure_services = optional(bool)
     is_virtual_network_filter_enabled     = optional(bool)
     public_network_access_enabled         = optional(bool)
@@ -93,7 +92,7 @@ object({
       type         = string
       identity_ids = optional(list(string))
     }))
-    capabilities = optional(list(string))
+    capabilities = optional(list(string), [])
     analytical_storage = optional(object({
       schema_type = string
     }))
@@ -111,43 +110,26 @@ object({
       database = optional(map(object({
         name             = string
         collection_names = optional(list(string))
-      })))
+      })), {})
       gremlin_database = optional(map(object({
         name        = string
         graph_names = list(string)
-      })))
+      })), {})
     }))
     geo_location = map(object({
       location          = string
       failover_priority = number
       zone_redundant    = optional(bool)
     }))
-    consistency_policy = optional(object({
-      consistency_level       = optional(string)
+    consistency_policy = object({
+      consistency_level       = string
       max_interval_in_seconds = optional(number)
       max_staleness_prefix    = optional(number)
-    }))
+    })
     virtual_network_rule = optional(map(object({
       id                                   = string
       ignore_missing_vnet_service_endpoint = optional(bool)
-    })))
-    private_endpoints = optional(map(object({
-      name                            = optional(string)
-      subnet_resource_id              = string
-      subresource_name                = optional(string)
-      private_dns_zone_resource_ids   = optional(list(string))
-      custom_network_interface_name   = optional(string)
-      tags                            = optional(map(string))
-      private_service_connection_name = optional(string)
-      is_manual_connection            = optional(bool)
-      request_message                 = optional(string)
-      ip_configurations = optional(map(object({
-        name               = optional(string)
-        private_ip_address = optional(string)
-        member_name        = optional(string)
-        subresource_name   = optional(string)
-      })))
-    })))
+    })), {})
     databases = optional(object({
       mongo = optional(map(object({
         name       = optional(string)
@@ -168,8 +150,8 @@ object({
             keys   = list(string)
             unique = optional(bool)
           })))
-        })))
-      })))
+        })), {})
+      })), {})
       sql = optional(map(object({
         name       = optional(string)
         throughput = optional(number)
@@ -190,35 +172,35 @@ object({
           }))
           index_policy = optional(object({
             indexing_mode  = optional(string)
-            included_paths = optional(list(string))
-            excluded_paths = optional(list(string))
+            included_paths = optional(list(string), [])
+            excluded_paths = optional(list(string), [])
             composite_index = optional(map(object({
               index = list(object({
                 path  = string
                 order = string
               }))
-            })))
+            })), {})
             spatial_index = optional(map(object({
               path = string
-            })))
+            })), {})
           }))
           unique_key = optional(map(object({
             paths = list(string)
-          })))
+          })), {})
           partition_key_paths   = list(string)
           partition_key_kind    = optional(string)
           partition_key_version = optional(number)
           default_ttl           = optional(number)
-        })))
-      })))
-    }))
+        })), {})
+      })), {})
+    }), {})
     tables = optional(map(object({
       name       = optional(string)
       throughput = optional(number)
       autoscale_settings = optional(object({
         max_throughput = number
       }))
-    })))
+    })), {})
   })
 ```
 
@@ -301,10 +283,6 @@ We welcome contributions from the community! Whether it's reporting a bug, sugge
 
 For more information, please see our contribution [guidelines](./CONTRIBUTING.md). <br><br>
 
-<a href="https://github.com/cloudnationhq/terraform-azure-cosmosdb/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=cloudnationhq/terraform-azure-cosmosdb" />
-</a>
-
 ## License
 
 MIT Licensed. See [LICENSE](./LICENSE) for full details.
@@ -313,4 +291,3 @@ MIT Licensed. See [LICENSE](./LICENSE) for full details.
 
 - [Documentation](https://learn.microsoft.com/en-us/azure/cosmos-db/)
 - [Rest Api](https://learn.microsoft.com/en-us/rest/api/cosmos-db/)
-- [Rest Api Specs](https://github.com/Azure/azure-rest-api-specs/tree/main/specification/cosmos-db)
