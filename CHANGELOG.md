@@ -1,5 +1,17 @@
 # Changelog
 
+## [6.0.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v5.0.0...v6.0.0) (2026-09-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade to azurerm v5 ([#119](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/119))
+
+### Features
+
+* **deps:** bump golang.org/x/crypto from 0.45.0 to 0.52.0 in /tests ([#116](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/116)) ([30a563c](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/30a563cf2ed083475b508ba5ad35ab1efe9d5ef1))
+* upgrade to azurerm v5 ([#119](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/119)) ([7951f87](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/7951f87032d512ea37338e84a946d21eede41a70))
+
 ## [5.0.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v4.1.0...v5.0.0) (2026-06-24)
 
 
