@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.1.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v6.0.0...v6.1.0) (2026-10-20)
+
+
+### Features
+
+* **deps:** bump github.com/klauspost/compress in /tests ([#120](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/issues/120)) ([9c6e92b](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/commit/9c6e92b2dfbc9d446956f620c9a3db758e6907de))
+
 ## [6.0.0](https://github.com/CloudNationHQ/terraform-azure-cosmosdb/compare/v5.0.0...v6.0.0) (2026-09-01)
 
 
